@@ -2,6 +2,7 @@
 using MyWpf.Commands;
 using MyWpf.EF;
 using MyWpf.Service;
+using MyWpf.Views;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -204,7 +205,7 @@ namespace MyWpf.ViewModels
                     }
                 case "用户管理":
                     {
-                        return new Skin();
+                        return new Users();
                     }
                 case "权限管理":
                     {
