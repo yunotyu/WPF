@@ -177,7 +177,7 @@
                             <materialDesign:PackIcon   Kind="{Binding MaxNormalKind , Mode=TwoWay}"  Height="20" Width="30">
                             </materialDesign:PackIcon>
                             <Button.ToolTip>
-                                <ToolTip>
+                                  <ToolTip>
                                     最大化
                                 </ToolTip>
                             </Button.ToolTip>
