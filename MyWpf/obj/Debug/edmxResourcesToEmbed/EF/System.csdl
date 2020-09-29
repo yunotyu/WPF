@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="menus">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="menuName" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="user_menu" Relationship="Self.FK_user_menu_menus" FromRole="menus" ToRole="user_menu" />
+  </EntityType>
+  <EntityType Name="user">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="age" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="phone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="user_menu" Relationship="Self.FK_user_menu_user" FromRole="user" ToRole="user_menu" />
+    <Property Name="pwd" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+    <Property Name="icon" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="user_menu">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="userId" Type="Int32" Nullable="false" />
+    <Property Name="menuId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="menus" Relationship="Self.FK_user_menu_menus" FromRole="user_menu" ToRole="menus" />
+    <NavigationProperty Name="user" Relationship="Self.FK_user_menu_user" FromRole="user_menu" ToRole="user" />
+  </EntityType>
+  <Association Name="FK_user_menu_menus">
+    <End Role="menus" Type="Self.menus" Multiplicity="1" />
+    <End Role="user_menu" Type="Self.user_menu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="menus">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user_menu">
+        <PropertyRef Name="menuId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_user_menu_user">
+    <End Role="user" Type="Self.user" Multiplicity="1" />
+    <End Role="user_menu" Type="Self.user_menu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="user">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user_menu">
+        <PropertyRef Name="userId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="ConnectStr" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="menus" EntityType="Self.menus" />
+    <EntitySet Name="user" EntityType="Self.user" />
+    <EntitySet Name="user_menu" EntityType="Self.user_menu" />
+    <AssociationSet Name="FK_user_menu_menus" Association="Self.FK_user_menu_menus">
+      <End Role="menus" EntitySet="menus" />
+      <End Role="user_menu" EntitySet="user_menu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_user_menu_user" Association="Self.FK_user_menu_user">
+      <End Role="user" EntitySet="user" />
+      <End Role="user_menu" EntitySet="user_menu" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

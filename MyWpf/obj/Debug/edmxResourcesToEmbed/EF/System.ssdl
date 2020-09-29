@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="menus">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="menuName" Type="nvarchar" MaxLength="15" Nullable="false" />
+  </EntityType>
+  <EntityType Name="user">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="name" Type="nvarchar" MaxLength="15" Nullable="false" />
+    <Property Name="age" Type="nvarchar" MaxLength="5" Nullable="false" />
+    <Property Name="address" Type="nvarchar" MaxLength="50" />
+    <Property Name="phone" Type="nvarchar" MaxLength="20" />
+    <Property Name="pwd" Type="nvarchar" MaxLength="12" />
+    <Property Name="icon" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="user_menu">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="userId" Type="int" Nullable="false" />
+    <Property Name="menuId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_user_menu_menus">
+    <End Role="menus" Type="Self.menus" Multiplicity="1" />
+    <End Role="user_menu" Type="Self.user_menu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="menus">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user_menu">
+        <PropertyRef Name="menuId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_user_menu_user">
+    <End Role="user" Type="Self.user" Multiplicity="1" />
+    <End Role="user_menu" Type="Self.user_menu" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="user">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user_menu">
+        <PropertyRef Name="userId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="SystemModelStoreContainer">
+    <EntitySet Name="menus" EntityType="Self.menus" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="user" EntityType="Self.user" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="user_menu" EntityType="Self.user_menu" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_user_menu_menus" Association="Self.FK_user_menu_menus">
+      <End Role="menus" EntitySet="menus" />
+      <End Role="user_menu" EntitySet="user_menu" />
+    </AssociationSet>
+    <AssociationSet Name="FK_user_menu_user" Association="Self.FK_user_menu_user">
+      <End Role="user" EntitySet="user" />
+      <End Role="user_menu" EntitySet="user_menu" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

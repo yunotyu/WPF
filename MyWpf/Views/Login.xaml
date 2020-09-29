@@ -1,0 +1,72 @@
+﻿<Window x:Class="MyWpf.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyWpf"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:MyWpf.ViewModels"
+        xmlns:pwd="clr-namespace:MyWpf.Common"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        Height="320" Width="500"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"  AllowsTransparency="True"
+       >
+    <Window.Background>
+        <ImageBrush ImageSource="../Image/login.jpg" Stretch="Fill" Opacity="0.7" ></ImageBrush>
+    </Window.Background>
+
+    <Window.DataContext>
+        <vm:LoginViewModel />
+    </Window.DataContext>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseDown">
+            <i:InvokeCommandAction Command="{Binding MoveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"></i:InvokeCommandAction>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <!--设置周边阴影-->
+    <Window.Effect>
+        <DropShadowEffect BlurRadius="15"  ShadowDepth="5"></DropShadowEffect>
+    </Window.Effect>
+
+     <!--设置获得焦点的元素-->
+    <Grid FocusManager.FocusedElement="{Binding ElementName=NameTextBox}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <materialDesign:PackIcon Height="30" Width="30" Grid.Row="0" Grid.Column="2"  Kind="WindowClose" HorizontalAlignment="Right" Cursor="Hand" Margin="0,0,8,0" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDown">
+                    <i:InvokeCommandAction Command="{Binding CloseCommand}"></i:InvokeCommandAction>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </materialDesign:PackIcon>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+            <TextBox Text="{Binding Path=UserName}" Margin="0,30,0,0" Width="250" Height="40" FontSize="25" x:Name="NameTextBox" materialDesign:HintAssist.Hint="用户名" >
+            </TextBox>
+            <PasswordBox pwd:PasswordBoxHelper.Attach ="True"  pwd:PasswordBoxHelper.Password="{Binding Pwd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,20,0,0" Width="250" Height="40" FontSize="25" x:Name="PasswordBox" materialDesign:HintAssist.Hint="密码" />
+        </StackPanel>
+        <StackPanel Margin="50,0,0,0" Orientation="Horizontal"  Grid.Row="2" Grid.Column="1" >
+            <CheckBox  VerticalAlignment="Center" x:Name="DisplaySelectedItemCheckBox" IsThreeState="False">
+            </CheckBox>
+            <TextBlock Margin="7,0,0,0" VerticalAlignment="Center" FontSize="15" Text="记住密码"></TextBlock>
+        </StackPanel>
+        <Button IsDefault="True" Command="{Binding LoginCommand}" VerticalAlignment="Top" Height="40" Width="200" Grid.Row="3" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedButton}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+            登录
+        </Button>
+    </Grid>
+</Window>

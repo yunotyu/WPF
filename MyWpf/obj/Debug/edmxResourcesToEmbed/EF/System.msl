@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="SystemModelStoreContainer" CdmEntityContainer="ConnectStr">
+    <EntitySetMapping Name="menus">
+      <EntityTypeMapping TypeName="SystemModel.menus">
+        <MappingFragment StoreEntitySet="menus">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="menuName" ColumnName="menuName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="user">
+      <EntityTypeMapping TypeName="SystemModel.user">
+        <MappingFragment StoreEntitySet="user">
+          <ScalarProperty Name="icon" ColumnName="icon" />
+          <ScalarProperty Name="pwd" ColumnName="pwd" />
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="age" ColumnName="age" />
+          <ScalarProperty Name="address" ColumnName="address" />
+          <ScalarProperty Name="phone" ColumnName="phone" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="user_menu">
+      <EntityTypeMapping TypeName="SystemModel.user_menu">
+        <MappingFragment StoreEntitySet="user_menu">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="userId" ColumnName="userId" />
+          <ScalarProperty Name="menuId" ColumnName="menuId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

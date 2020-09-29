@@ -1,0 +1,179 @@
+﻿<UserControl x:Class="MyWpf.Skin"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyWpf"
+             xmlns:converter="clr-namespace:MyWpf.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:materialDesignColors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Name="u" >
+
+
+    <UserControl.Resources>
+
+        <converter:ColorToBrushConverter x:Key="colorConverter"></converter:ColorToBrushConverter>
+        <converter:MultiValueEqualityConverter x:Key="multiConverter"></converter:MultiValueEqualityConverter>
+
+        <!--将数据类作为静态资源，在别窗体作为content时，也能找到数据-->
+        <local:SkinViewModel x:Key="data"></local:SkinViewModel>
+
+        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth0" />
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="HexLabelTextBlock" BasedOn="{StaticResource MaterialDesignBody2TextBlock}">
+            <Setter Property="Margin" Value="8" />
+        </Style>
+
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="LightGray" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="LabelTextBox">
+            <Setter Property="FontWeight" Value="Light" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0 0 0 4" />
+        </Style>
+
+        <!--定义颜色按钮样式部分-->
+        <DataTemplate x:Key="SwatchColorTemplate">
+            <Grid x:Name="dataTempGrid">
+                <Button Height="40" Width="40" Background="{Binding Converter={StaticResource colorConverter}}" 
+                        Command="{Binding Source={StaticResource data},Path=ChangeHueCommand }" 
+                        CommandParameter="{Binding}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                            <Setter Property="local:ButtonAssist.UniformCornerRadius" Value="0" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Margin" Value="1 1 0 0" />
+                            <Setter Property="materialDesign:RippleAssist.IsDisabled" Value="True" />
+                            <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth0" />
+                            <Setter Property="Tag" Value="0" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="(local:ButtonAssist.UniformCornerRadius)" 
+                                                                 To="8" Duration="0:0:0.18" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="(local:ButtonAssist.UniformCornerRadius)" 
+                                                                 From="8" Duration="0:0:0.18" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                                <DataTrigger Value="True">
+                                    <DataTrigger.Binding>
+                                        <MultiBinding Converter="{StaticResource multiConverter}">
+                                            <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:Skin}" Path="DataContext.SelectedColor" Mode="OneWay" />
+                                            <Binding Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </DataTrigger.Binding>
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="(local:ButtonAssist.UniformCornerRadius)" 
+                                                                 To="20" Duration="0:0:0.18" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="(local:ButtonAssist.UniformCornerRadius)" 
+                                                                 From="20" Duration="0:0:0.18" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel  x:Name="colorDock" Margin="16">
+        <!--切换颜色选择方法部分-->
+        <UniformGrid Columns="1" DockPanel.Dock="Right">
+            <RadioButton x:Name="MdPaletteButton" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="4" IsChecked="True" Content="MD Palette"/>
+            <RadioButton x:Name="CustomPaletteButton" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="4" IsChecked="False" Content="Custom"/>
+        </UniformGrid>
+        <Grid DockPanel.Dock="Left">
+            <Grid Visibility="{Binding IsChecked, ElementName=CustomPaletteButton, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <DockPanel>
+                    <TextBox Text="{Binding Color, Source={x:Reference Name=ColorPicker}, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource MaterialDesignFilledTextFieldTextBox}" materialDesign:HintAssist.Hint="Color HEX value"
+                                     DockPanel.Dock="Top" Margin="2,0,10,2"/>
+                    <Rectangle Fill="{Binding Color, Source={x:Reference Name=ColorPicker}, Converter={StaticResource colorConverter}}" Height="100" Margin="2,0,10,2" />
+                </DockPanel>
+                <materialDesign:ColorPicker Color="{Binding Source={StaticResource data}, Path=SelectedColor, Delay=25}" Grid.Column="1" Width="900" x:Name="ColorPicker" />
+            </Grid>
+        </Grid>
+        
+        <!--颜色按钮选择部分-->
+        <ScrollViewer Visibility="{Binding IsChecked, ElementName=MdPaletteButton, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Width" Value="40" />
+                            <Setter Property="Margin" Value="1 1 0 0" />
+                            <Setter Property="TextAlignment" Value="Center" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Rectangle Width="80" />
+                    <TextBlock>50</TextBlock>
+                    <TextBlock>100</TextBlock>
+                    <TextBlock>200</TextBlock>
+                    <TextBlock>300</TextBlock>
+                    <TextBlock>400</TextBlock>
+                    <TextBlock>500</TextBlock>
+                    <TextBlock>600</TextBlock>
+                    <TextBlock>700</TextBlock>
+                    <TextBlock>800</TextBlock>
+                    <TextBlock>900</TextBlock>
+                    <TextBlock>A100</TextBlock>
+                    <TextBlock>A200</TextBlock>
+                    <TextBlock>A400</TextBlock>
+                    <TextBlock>A700</TextBlock>
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Source={StaticResource data},Path=Swatches}"  x:Name="item"  >
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type materialDesignColors:ISwatch}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" Width="80" VerticalAlignment="Center" />
+                                <ItemsControl ItemsSource="{Binding Hues}" ItemTemplate="{StaticResource SwatchColorTemplate}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
+    
