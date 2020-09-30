@@ -4,9 +4,60 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MyWpf.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:MyWpf.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <vm:UsersViewModel x:Key="users"></vm:UsersViewModel>
+        <!--表头居中-->
+        <Style x:Key="headerStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <!--保存，添加..-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="0,0,20,0" Content="保存"></Button>
+            <!--{Binding}传递的是，父窗体的数据源HomeViewModel-->
+            <Button Command="{Binding Source={StaticResource users}, Path=AddUserCommand}" CommandParameter="{Binding}" Margin="0,0,20,0" Content="添加"></Button>
+            <Button Margin="0,0,20,0" Content="删除"></Button>
+            <Button Margin="0,0,20,0" Content="刷新"></Button>
+        </StackPanel>
+        
+        <!--表格-->
+        <DataGrid  Grid.Row="1" CanUserAddRows="False" SelectionUnit="Cell"
+         SelectionMode="Extended"                
+         ItemsSource="{Binding Source={StaticResource users}, Path=Users}"
+                  AutoGenerateColumns="False"
+                  ColumnHeaderStyle="{StaticResource headerStyle}">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn  Binding="{Binding IsSelected}"></DataGridCheckBoxColumn>
+                <DataGridTextColumn Binding="{Binding id}" Visibility="Hidden"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding name}" Header="姓名"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding age}" Header="年龄"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding phone}" Header="手机"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding address}" Header="地址"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <!--分页-->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Right">
+            <Button Margin="0,0,10,0"  Content="上一页"></Button>
+            <Button Margin="0,0,20,0"  Content="下一页"></Button>
+            <StackPanel  Margin="0,0,10,0"  Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Margin="0,0,5,0" FontSize="15" VerticalAlignment="Center" Text="第"></TextBlock>
+                <TextBox Margin="0,0,5,0" BorderThickness="0" Style="{x:Null}" FontSize="20" Height="40" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="40" Text="1"></TextBox>
+                <TextBlock FontSize="15" VerticalAlignment="Center" Text="页"></TextBlock>
+            </StackPanel>
+            <Button  Margin="0,0,20,0"  Content="前往"></Button>
+            <TextBlock  Margin="0,0,20,0"  FontSize="20" Text="共3页" VerticalAlignment="Center"></TextBlock>
+        </StackPanel>
     </Grid>
 </UserControl>

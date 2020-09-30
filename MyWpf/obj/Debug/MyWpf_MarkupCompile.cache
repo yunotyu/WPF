@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\admin\source\repos\MyWpf\MyWpf\App.xaml
-3-1321218326
+6-1469428436
 2-868503601
-35-2047527522
+41572626144
 77-6795384
-Views\Home.xaml;Views\Login.xaml;Views\Skin.xaml;
+Resources\AppResources.xaml;Views\AddUser.xaml;Views\Home.xaml;Views\Login.xaml;Views\Skin.xaml;Views\Users.xaml;
 
 False
 

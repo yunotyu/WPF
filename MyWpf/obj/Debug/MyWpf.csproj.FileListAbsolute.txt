@@ -45,3 +45,8 @@ C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.csproj.CoreCompileInputs
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.csproj.CopyComplete
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.exe
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.pdb
+C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\Views\Users.g.cs
+C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\Views\Users.baml
+C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\Views\AddUser.g.cs
+C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\Views\AddUser.baml
+C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\Resources\AppResources.baml

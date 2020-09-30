@@ -15,17 +15,33 @@ using System.Windows.Controls;
 
 namespace MyWpf.ViewModels
 {
-    public class HomeViewModel:BindableBase
+    public class HomeViewModel: ViewModelBase
     {
         public List<menus> Menus { get; set; }
         public MenuService MenuService { get; set; }
 
-        private DelegateCommand moveCommand;
+       
 
         /// <summary>
         /// 存放各视图的集合
         /// </summary>
         public ObservableCollection<Module> Modules { get; set; }
+
+
+        private Home home;
+
+        /// <summary>
+        /// 记录当前的主窗体对象
+        /// </summary>
+        public Home Home
+        {
+            get { return home; }
+            set
+            {
+                home = value;
+                this.RaisePropertyChanged("Home");
+            }
+        }
 
 
         private user user;
@@ -56,30 +72,7 @@ namespace MyWpf.ViewModels
         }
 
 
-        /// <summary>
-        /// 窗体移动
-        /// </summary>
-        public DelegateCommand MoveCommand
-        {
-            get { return moveCommand; }
-            set
-            {
-                moveCommand = value;
-                this.RaisePropertyChanged("MoveCommand");
-            }
-        }
-
-        private DelegateCommand closeCommand;
-
-        public DelegateCommand CloseCommand
-        {
-            get { return closeCommand; }
-            set
-            {
-                closeCommand = value;
-                this.RaisePropertyChanged("CloseCommand");
-            }
-        }
+     
 
         private DelegateCommand maxNormalCommand;
 
@@ -116,14 +109,13 @@ namespace MyWpf.ViewModels
         public HomeViewModel()
         {
             maxNormalKind = PackIconKind.WindowMaximize;//显示最大化按钮
-            moveCommand = new DelegateCommand();
+          
             moveCommand.ExcuteAction = new Action<object>((o) =>
             {
                 var win = o as Window;
                 win.DragMove();
             });
 
-            closeCommand = new DelegateCommand();
             closeCommand.ExcuteAction = new Action<object>(o =>
             {
                 Application.Current.Shutdown();
@@ -165,11 +157,11 @@ namespace MyWpf.ViewModels
                   List<object> li = new List<object>();
                   li = o as List<object>;
                   Home win = li[0] as Home;
+                  home = win;//记录当前主窗体对象，在传递到其他页面时，可以使用
                   int index = (int)li[1];
                   if (win != null)
                   {
-                    
-                      win.mainContent.Content = Modules[index];
+                     win.mainContent.Content = Modules[index];
                   }
               });
 

@@ -26,6 +26,7 @@ namespace MyWpf
         public Login()
         {
             InitializeComponent();
+            this.ShowDialog();
         }
 
     }

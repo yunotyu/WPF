@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyWpf.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,24 +11,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace MyWpf.Views
 {
     /// <summary>
-    /// Users.xaml 的交互逻辑
+    /// AddUser.xaml 的交互逻辑
     /// </summary>
-    public partial class Users : UserControl
+    public partial class AddUser : Window
     {
-        public Users()
+        public AddUser()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(this.ToString());
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Windows;
 
 namespace MyWpf.ViewModels
 {
-    public class LoginViewModel:BindableBase //这个是Prism.Wpf里的类,用于属性修改消息通知
+    public class LoginViewModel:ViewModelBase //这个是Prism.Wpf里的类,用于属性修改消息通知
     {
         public UserService UserService { get; set; }
         public User_MenuService User_MenuService { get; set; }
@@ -56,33 +56,6 @@ namespace MyWpf.ViewModels
             }
         }
 
-        private DelegateCommand moveCommand;
-
-        /// <summary>
-        /// 窗体移动
-        /// </summary>
-        public DelegateCommand MoveCommand
-        {
-            get { return moveCommand; }
-            set
-            {
-                moveCommand = value;
-                this.RaisePropertyChanged("MoveCommand");
-            }
-        }
-
-        private DelegateCommand closeCommand;
-
-        public DelegateCommand CloseCommand
-        {
-            get { return closeCommand; }
-            set
-            {
-                closeCommand = value;
-                this.RaisePropertyChanged("CloseCommand");
-            }
-        }
-
 
         public LoginViewModel()
         {
@@ -92,14 +65,12 @@ namespace MyWpf.ViewModels
             loginCommand = new DelegateCommand();
             loginCommand.ExcuteAction = new Action<object>(Login);
 
-            moveCommand = new DelegateCommand();
             moveCommand.ExcuteAction = new Action<object>((o) => 
             {
                 var win = o as Window;
                 win.DragMove();
             });
 
-            closeCommand = new DelegateCommand();
             closeCommand.ExcuteAction=new Action<object>(o=>
             {
                 Application.Current.Shutdown();
