@@ -1,4 +1,5 @@
 ﻿using MyWpf.EF;
+using MyWpf.EF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MyWpf
         /// <summary>
         /// 当前登录的用户信息
         /// </summary>
-        public static user CurUser;
+        public static User CurUser;
 
         /// <summary>
         /// 菜单id集合
@@ -24,7 +25,7 @@ namespace MyWpf
 
         static  AppCache()
         {
-            CurUser = new user();
+            CurUser = new User();
             Ids = new List<int>();
         }
     }

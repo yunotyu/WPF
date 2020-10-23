@@ -1,17 +1,20 @@
-﻿<Window x:Class="MyWpf.Home"
+﻿<base:WindowBase x:Class="MyWpf.Home"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:Interaction="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:MyWpf"
         xmlns:vm="clr-namespace:MyWpf.ViewModels"
         xmlns:conveter="clr-namespace:MyWpf.Converters"
+        xmlns:base="clr-namespace:MyWpf.Common"         
         mc:Ignorable="d"
         Title="Home" Height="800" Width="1200"
-        WindowStartupLocation="CenterScreen"
-        WindowStyle="None" >
+        x:Name="home"
+        MaxHeight="{Binding WinMaxHeight}" MaxWidth="{Binding WinMaxWidth}"
+        >
 
     <WindowChrome.WindowChrome>
         <!--表示窗口周围透明边框的宽度-->
@@ -25,15 +28,25 @@
     <Window.DataContext>
         <vm:HomeViewModel></vm:HomeViewModel>
     </Window.DataContext>
-
+    
+    <!--开启定时器，显示当前时间-->
     <i:Interaction.Triggers>
-        <i:EventTrigger EventName="MouseDown">
-            <i:InvokeCommandAction Command="{Binding MoveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"></i:InvokeCommandAction>
+        <i:EventTrigger EventName="Loaded">
+                <Interaction:CallMethodAction TargetObject="{Binding}" MethodName="WindowLoaded">
+                </Interaction:CallMethodAction>
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    
+    <!--<i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseDown">
+            --><!--<i:InvokeCommandAction Command="{Binding MoveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"></i:InvokeCommandAction>-->
+            <!--不使用命令，因为没法传递事件参数，无法获取是左键点击还是右键点击--><!--
+            <Interaction:CallMethodAction TargetObject="{Binding }" MethodName="MoveWindow"></Interaction:CallMethodAction>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>-->
 
     <Window.Effect>
-        <DropShadowEffect BlurRadius="10" Color="Gray"></DropShadowEffect>
+        <DropShadowEffect BlurRadius="5" ></DropShadowEffect>
     </Window.Effect>
 
     <!--主窗体作为宿主-->
@@ -67,8 +80,11 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="80"></RowDefinition>
                 <RowDefinition></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
             </Grid.RowDefinitions>
 
+            
+            <!--菜单栏部分-->
             <materialDesign:ColorZone Height="720" Mode="PrimaryMid" Grid.Row="1" Grid.Column="0">
                 <StackPanel   Orientation="Vertical"  >
 
@@ -146,16 +162,32 @@
                     </Grid.ColumnDefinitions>
 
                     <!--头像部分-->
-                    <Image Margin="0,0,30,0"  HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"  Source="{Binding Path=User.icon}"  Height="40" Width="40" >
+                    <Image Margin="0,0,30,0"  HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"  Source="{Binding Path=User.Icon,Converter={StaticResource imaToStr}}"  Height="40" Width="40" >
                         <Image.ToolTip>
-                            <ToolTip Placement="Right" Content="{Binding Path=User.name}">
+                            <ToolTip Placement="Right" Content="{Binding Path=User.Name}">
                             </ToolTip>
                         </Image.ToolTip>
+                        <Image.ContextMenu>
+                            <ContextMenu  >
+                                <MenuItem  Header="注销" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding LogOutCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu,Mode=FindAncestor}, Path=PlacementTarget}"></i:InvokeCommandAction>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Image.ContextMenu>
                         <Image.Clip>
                             <EllipseGeometry RadiusX="20" RadiusY="20" Center="20,20"></EllipseGeometry>
                         </Image.Clip>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDown">
+                                <i:InvokeCommandAction Command="{Binding EditLoginUserCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"></i:InvokeCommandAction>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                     </Image>
-
+                    <!--<Button Content="11" Click="Button_Click"></Button>-->
                     <TextBlock  HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Cursor="Hand" Text="Welcome !" VerticalAlignment="Center" FontSize="25" FontWeight="Bold" ></TextBlock>
 
                     
@@ -198,9 +230,25 @@
             </materialDesign:ColorZone >
 
             <!--主要内容部分-->
-            <ContentControl x:Name="mainContent" Grid.Row="1" Grid.Column="1" >
+            <ContentControl Margin="0,80,0,0" x:Name="mainContent" Grid.Row="1" Grid.Column="1" >
             </ContentControl>
-
+            
+            <!--状态栏部分-->
+            <materialDesign:ColorZone Height="30" Mode="PrimaryMid" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                <StatusBar VerticalAlignment="Center" >
+                    <StatusBar.Template>
+                        <ControlTemplate TargetType="StatusBar">
+                            <StackPanel>
+                                <ItemsPresenter HorizontalAlignment="Right" VerticalAlignment="Center"></ItemsPresenter>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </StatusBar.Template>
+                    <TextBlock  Text="当前用户:"></TextBlock>
+                    <TextBlock  Text="{Binding User.Name}"></TextBlock>
+                    <TextBlock Margin="30,0,0,0"  Text="时间:"></TextBlock>
+                    <TextBlock Margin="0,0,40,0" Text="{Binding CurrentTime}"></TextBlock>
+                </StatusBar>
+            </materialDesign:ColorZone>
         </Grid>
     </materialDesign:DialogHost>
-</Window>
+</base:WindowBase>

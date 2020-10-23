@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="MyWpf.Views.Main"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyWpf.Views"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:chart="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:inter="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:vm="clr-namespace:MyWpf.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" >
+    <UserControl.Resources>
+        <vm:MainViewModel x:Key="vm"></vm:MainViewModel>
+    </UserControl.Resources>
+    <Grid x:Name="grid">
+        
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Loaded">
+                <i:InvokeCommandAction Command="{Binding Source={StaticResource vm}, Path=InitChartCommand}" CommandParameter="{Binding Source={x:Reference Name=chart}}"></i:InvokeCommandAction>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2.5*"></RowDefinition>
+            <RowDefinition Height="180"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="15"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <!--4个卡片-->
+        <md:Card Background="WhiteSmoke"  Grid.Row="0" Grid.Column="1">
+            <StackPanel  VerticalAlignment="Center">
+                <TextBlock Margin="0,-30,0,0" FontWeight="Bold" Text="操作时间" FontSize="20" HorizontalAlignment="Center"></TextBlock>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Image Source="../Image/time.png" Height="100" Width="100" Margin="0,0,10,0"></Image>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="上次登录时间："></TextBlock>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="2020/10/19 08:35"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="上次离线时间："></TextBlock>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="2020/10/19 17:28"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </md:Card>
+
+        <md:Card  Background="WhiteSmoke" Grid.Row="0" Grid.Column="3">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Margin="0,-30,0,0" FontWeight="Bold" Text="当月支出" FontSize="20" HorizontalAlignment="Center"></TextBlock>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Image Source="../Image/money.png" Height="100" Width="100" Margin="0,0,10,0"></Image>
+                    <StackPanel VerticalAlignment="Center">
+                            <TextBlock FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="￥351423"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </md:Card>
+
+        <md:Card  Background="WhiteSmoke" Grid.Row="0" Grid.Column="5">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Margin="0,-30,0,0" FontWeight="Bold" Text="仓库情况" FontSize="20" HorizontalAlignment="Center"></TextBlock>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Image Source="../Image/storeCount.png" Height="100" Width="100" Margin="0,0,10,0"></Image>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="进料数："></TextBlock>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="102544件"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="出货数："></TextBlock>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="54687件"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </md:Card>
+
+        <md:Card  Background="WhiteSmoke" Grid.Row="0" Grid.Column="7">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Margin="0,-30,0,0" FontWeight="Bold" Text="仓库情况" FontSize="20" HorizontalAlignment="Center"></TextBlock>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Image Source="../Image/msg.png" Height="100" Width="100" Margin="0,0,10,0"></Image>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="待处理："></TextBlock>
+                            <TextBlock FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Text="无"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </md:Card>
+        
+        <!--图表-->
+        <Grid  Background="#FFF5EBDE"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="7" Margin="0,-130,0,0">
+            <chart:CartesianChart Name="chart" LegendLocation="Top">
+            </chart:CartesianChart>
+        </Grid>
+    </Grid>
+</UserControl>

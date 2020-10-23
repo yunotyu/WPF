@@ -12,6 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data;
+using System.IO;
+using MyWpf.EF;
+using MyWpf.EF.Models;
+using MyWpf.ViewModels;
 
 namespace MyWpf.Views
 {
@@ -23,11 +28,7 @@ namespace MyWpf.Views
         public Users()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(this.ToString());
+            
         }
     }
 }

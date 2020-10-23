@@ -6,14 +6,18 @@
              xmlns:local="clr-namespace:MyWpf.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vm="clr-namespace:MyWpf.ViewModels"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:inter="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:convert="clr-namespace:MyWpf.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <vm:UsersViewModel x:Key="users"></vm:UsersViewModel>
+        <vm:UsersViewModel x:Key="users" ></vm:UsersViewModel>
         <!--表头居中-->
         <Style x:Key="headerStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
         </Style>
+        <convert:MultiParamConverter x:Key="multi"></convert:MultiParamConverter>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -21,43 +25,134 @@
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
+
+        <!--查询框部分-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+            <TextBox Text="{Binding Source={StaticResource users}, Path=SearchText}" x:Name="searchTextbox" FontSize="15" Background="WhiteSmoke" Width="500" VerticalAlignment="Center" Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
+                      materialDesign:HintAssist.Hint="请输入搜索内容"></TextBox>
+            <Button Command="{Binding Source={StaticResource users},Path=SearchCommand}"
+                    Margin="15,0,0,0">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" >
+                        <materialDesign:PackIcon Kind="Magnify" />
+                        <TextBlock Margin="10,0,0,0" Text="搜索" ></TextBlock>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+        </StackPanel>
         
         <!--保存，添加..-->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Margin="0,0,20,0" Content="保存"></Button>
+            <Button Margin="0,0,20,0">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" >
+                        <materialDesign:PackIcon Kind="PlaylistCheck" />
+                        <TextBlock Margin="10,0,0,0" Text="编辑" ></TextBlock>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            
             <!--{Binding}传递的是，父窗体的数据源HomeViewModel-->
-            <Button Command="{Binding Source={StaticResource users}, Path=AddUserCommand}" CommandParameter="{Binding}" Margin="0,0,20,0" Content="添加"></Button>
-            <Button Margin="0,0,20,0" Content="删除"></Button>
-            <Button Margin="0,0,20,0" Content="刷新"></Button>
+            <Button Command="{Binding Source={StaticResource users}, Path=AddUserDiaCommand}"  Margin="0,0,20,0" >
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource multi}">
+                        <Binding></Binding>
+                        <!--将当前的分页数据传递到打开的窗体类-->
+                        <Binding Source="{StaticResource users}" Path="Page" Mode="TwoWay"></Binding>
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" >
+                        <materialDesign:PackIcon Kind="PlaylistPlus" />
+                        <TextBlock Margin="10,0,0,0" Text="添加" ></TextBlock>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            
+            <Button Command="{Binding Source={StaticResource users}, Path=DeleteCommand}" Margin="0,0,20,0" >
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" >
+                        <materialDesign:PackIcon Kind="PlaylistRemove" />
+                        <TextBlock Margin="10,0,0,0" Text="删除" ></TextBlock>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            
+            <Button Margin="0,0,20,0">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" >
+                        <materialDesign:PackIcon Kind="PlaylistPlay" />
+                        <TextBlock Margin="10,0,0,0" Text="刷新" ></TextBlock>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
         </StackPanel>
         
         <!--表格-->
-        <DataGrid  Grid.Row="1" CanUserAddRows="False" SelectionUnit="Cell"
+        <DataGrid  IsReadOnly="True" Grid.Row="1" CanUserAddRows="False"
          SelectionMode="Extended"                
-         ItemsSource="{Binding Source={StaticResource users}, Path=Users}"
+         ItemsSource="{Binding Source={StaticResource users}, Path=Page.Items}"
                   AutoGenerateColumns="False"
                   ColumnHeaderStyle="{StaticResource headerStyle}">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn  Binding="{Binding IsSelected}"></DataGridCheckBoxColumn>
-                <DataGridTextColumn Binding="{Binding id}" Visibility="Hidden"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding name}" Header="姓名"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding age}" Header="年龄"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding phone}" Header="手机"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding address}" Header="地址"></DataGridTextColumn>
+                <DataGridCheckBoxColumn IsReadOnly="False"  Binding="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></DataGridCheckBoxColumn>
+                <DataGridTextColumn Binding="{Binding Id}" Visibility="Hidden"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Name}" Header="姓名"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Age}" Header="年龄"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Phone}" Header="手机"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Address}" Header="地址"></DataGridTextColumn>
             </DataGrid.Columns>
+            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding Source={StaticResource users}, Path=DataGirdDouClickCommand}">
+                        <i:InvokeCommandAction.CommandParameter>
+                            <MultiBinding Converter="{StaticResource multi}">
+                                <Binding RelativeSource="{RelativeSource AncestorType=DataGrid, Mode=FindAncestor}" Path="SelectedItem"></Binding>
+                                <Binding></Binding>
+                            </MultiBinding>
+                        </i:InvokeCommandAction.CommandParameter>
+                    </i:InvokeCommandAction>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+         
         </DataGrid>
         
         <!--分页-->
-        <StackPanel Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Right">
-            <Button Margin="0,0,10,0"  Content="上一页"></Button>
-            <Button Margin="0,0,20,0"  Content="下一页"></Button>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,0,0,20" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
+                <TextBlock VerticalAlignment="Center" FontSize="15" Text="每页" ></TextBlock>
+                <TextBox x:Name="perPageItem" Text="{Binding Source={StaticResource users}, Path=Page.PerPageItem,Mode=TwoWay}" FontSize="20" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="40"  Height="40" Style="{x:Null}" BorderThickness="0" >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="TextChanged">
+                            <i:InvokeCommandAction Command="{Binding Source={StaticResource users},Path=UpdatePerPageItemCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox},Path=Text}" ></i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <!--<TextBox.InputBindings>
+                        <KeyBinding Command="{Binding Source={StaticResource users},Path=UpdatePerPageItemCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox},Path=Text}" Key="Enter"></KeyBinding>
+                    </TextBox.InputBindings>-->
+                </TextBox>
+                <TextBlock VerticalAlignment="Center" FontSize="15" Text="条"></TextBlock>
+            </StackPanel>
+            
             <StackPanel  Margin="0,0,10,0"  Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Margin="0,0,5,0" FontSize="15" VerticalAlignment="Center" Text="第"></TextBlock>
-                <TextBox Margin="0,0,5,0" BorderThickness="0" Style="{x:Null}" FontSize="20" Height="40" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="40" Text="1"></TextBox>
+                <TextBlock  FontSize="15" VerticalAlignment="Center" Text="第"></TextBlock>
+                <TextBox x:Name="gotoPage" Text="{Binding Source={StaticResource users}, Path=Page.CurPage,Mode=TwoWay}"  BorderThickness="0" Style="{x:Null}" FontSize="20" Height="40" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="40" ></TextBox>
                 <TextBlock FontSize="15" VerticalAlignment="Center" Text="页"></TextBlock>
             </StackPanel>
-            <Button  Margin="0,0,20,0"  Content="前往"></Button>
-            <TextBlock  Margin="0,0,20,0"  FontSize="20" Text="共3页" VerticalAlignment="Center"></TextBlock>
+            <Button Command="{Binding Source={StaticResource users}, Path=GotoCommand}" CommandParameter="{Binding Source={x:Reference Name=gotoPage},Path=Text}"  Margin="0,0,20,0"  Content="前往"></Button>
+            
+            <StackPanel Orientation="Horizontal">
+                <TextBlock  Margin="0,0,10,0"  FontSize="20" Text="共" VerticalAlignment="Center"></TextBlock>
+                <TextBlock    FontSize="20" Text="{Binding Source={StaticResource users}, Path=Page.AllPageCount,Mode=TwoWay}" VerticalAlignment="Center"></TextBlock>
+                <TextBlock  Margin="10,0,20,0"  FontSize="20" Text="页" VerticalAlignment="Center"></TextBlock>
+            </StackPanel>
+            
+            <Button Command="{Binding Source={StaticResource users}, Path=FirstCommand}" Margin="0,0,10,0"  Content="首页"></Button>
+            <Button Command="{Binding Source={StaticResource users}, Path=PrevCommand}" Margin="0,0,10,0"  Content="上一页"></Button>
+            <Button Command="{Binding Source={StaticResource users}, Path=NextCommand}" Margin="0,0,10,0"  Content="下一页"></Button>
+            <Button Command="{Binding Source={StaticResource users}, Path=LastCommand}" Margin="0,0,10,0"  Content="尾页"></Button>
         </StackPanel>
     </Grid>
 </UserControl>

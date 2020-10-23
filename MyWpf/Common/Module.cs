@@ -27,9 +27,9 @@ namespace MyWpf
             {
                 switch (value)
                 {
-                    case "用户信息":
+                    case "主页":
                         {
-                            iconCode = "Account";
+                            iconCode = "Home";
                             break;
                         }
                     case "用户管理":

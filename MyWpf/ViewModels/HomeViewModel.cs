@@ -1,6 +1,10 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using MaterialDesignThemes.Wpf;
 using MyWpf.Commands;
+using MyWpf.Common;
 using MyWpf.EF;
+using MyWpf.EF.Models;
 using MyWpf.Service;
 using MyWpf.Views;
 using Prism.Mvvm;
@@ -8,19 +12,20 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace MyWpf.ViewModels
 {
     public class HomeViewModel: ViewModelBase
     {
-        public List<menus> Menus { get; set; }
+        public List<MyWpf.EF.Models.Menu> Menus { get; set; }
         public MenuService MenuService { get; set; }
-
-       
 
         /// <summary>
         /// 存放各视图的集合
@@ -44,9 +49,9 @@ namespace MyWpf.ViewModels
         }
 
 
-        private user user;
+        private User user;
 
-        public user User
+        public User User
         {
             get { return user; }
             set
@@ -55,6 +60,19 @@ namespace MyWpf.ViewModels
                 this.RaisePropertyChanged("User");
             }
         }
+
+        private string currentTime;
+
+        public string CurrentTime
+        {
+            get { return currentTime; }
+            set
+            {
+                currentTime = value;
+                this.RaisePropertyChanged("CurrentTime");
+            }
+        }
+
 
         /// <summary>
         /// 最大化，正常化的代号
@@ -70,9 +88,6 @@ namespace MyWpf.ViewModels
                 this.RaisePropertyChanged("MaxNormalKind");
             }
         }
-
-
-     
 
         private DelegateCommand maxNormalCommand;
 
@@ -105,16 +120,43 @@ namespace MyWpf.ViewModels
             set;
         }
 
+        private DelegateCommand editLoginUserCommand;
+
+        public DelegateCommand EditLoginUserCommand
+        {
+            get { return editLoginUserCommand; }
+            set
+            {
+                editLoginUserCommand = value;
+                this.RaisePropertyChanged("EditLoginUserCommand");
+            }
+        }
+
+      
+
+        private DelegateCommand logOutCommand;
+
+        public DelegateCommand LogOutCommand
+        {
+            get { return logOutCommand; }
+            set
+            {
+                logOutCommand = value;
+                this.RaisePropertyChanged("LogOutCommand");
+            }
+        }
+
 
         public HomeViewModel()
         {
+            CurrentTime = DateTime.Now.ToLongTimeString();
             maxNormalKind = PackIconKind.WindowMaximize;//显示最大化按钮
           
-            moveCommand.ExcuteAction = new Action<object>((o) =>
-            {
-                var win = o as Window;
-                win.DragMove();
-            });
+            //moveCommand.ExcuteAction = new Action<object>((o) =>
+            //{
+            //    var win = o as Window;
+            //    win.DragMove();
+            //});
 
             closeCommand.ExcuteAction = new Action<object>(o =>
             {
@@ -157,16 +199,46 @@ namespace MyWpf.ViewModels
                   List<object> li = new List<object>();
                   li = o as List<object>;
                   Home win = li[0] as Home;
+                  (win.DataContext as HomeViewModel).User.IsEditLogingUser = false;
                   home = win;//记录当前主窗体对象，在传递到其他页面时，可以使用
                   int index = (int)li[1];
                   if (win != null)
                   {
-                     win.mainContent.Content = Modules[index];
+                      //var newModule = GetNewInstance(Modules[index]);
+                      win.mainContent.Content = Modules[index].Content;
+                      GC.Collect();
                   }
               });
 
+            //编辑登录用户
+            editLoginUserCommand = new DelegateCommand();
+            editLoginUserCommand.ExcuteAction = new Action<object>(o =>
+              {
+                  var home = o as Home;
+                  EditLoginingUser editLoginingUser = new EditLoginingUser();
+                  var u =new UserService().QueryById((home.DataContext as HomeViewModel).User.Id);
+                  (home.DataContext as HomeViewModel).User = u;
+                  u.IsEditLogingUser = true;
+                  u.ConfirmPwd = u.Pwd;//第一次打开，让相等
+                  home.mainContent.Content =editLoginingUser.Content;
+              });
+
+            //注销
+            logOutCommand = new DelegateCommand();
+            logOutCommand.ExcuteAction = new Action<object>(o =>
+              {
+                  Window window = GetEleTopParent(o as FrameworkElement) as Window;
+                  Login login = new Login();
+                  login.Show();
+                  window.Close();
+                  home = null;
+                  Modules = null;
+                  window = null;
+                  GC.Collect();
+              });
+
             //获取用户对应权限菜单
-            Menus = new List<menus>();
+            Menus = new List<MyWpf.EF.Models.Menu>();
             MenuService = new MenuService();
             Modules = new ObservableCollection<Module>();
             Menus = MenuService.QueryByIds(AppCache.Ids);
@@ -174,12 +246,28 @@ namespace MyWpf.ViewModels
             {
                 Modules.Add(new Module
                 {
-                    MenuName = m.menuName,
-                    IconCode = m.menuName,
-                    Content = (GetView(m.menuName) as UserControl).Content
+                    MenuName = m.MenuName,
+                    IconCode = m.MenuName,
+                    Content = (GetView(m.MenuName) as UserControl).Content
                 });
             });
             user = AppCache.CurUser;
+
+        }
+
+        //窗体加载
+        public void WindowLoaded(object sender, RoutedEventArgs e)
+        {
+            Home home = sender as Home;
+            home.mainContent.Content = new Main().Content;
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Tick+=new EventHandler(new Action<object,EventArgs>((sen,eve)=> 
+            {
+                (home.DataContext as HomeViewModel).CurrentTime = DateTime.Now.ToLongTimeString();
+            }));
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Start();
         }
 
         /// <summary>
@@ -191,9 +279,9 @@ namespace MyWpf.ViewModels
         {
             switch (name)
             {
-                case "用户信息":
+                case "主页":
                     {
-                        return new Skin();
+                        return new Main();
                     }
                 case "用户管理":
                     {
@@ -201,7 +289,35 @@ namespace MyWpf.ViewModels
                     }
                 case "权限管理":
                     {
+                        return new EidtPermiss();
+                    }
+                case "皮肤":
+                    {
                         return new Skin();
+                    }
+                default:
+                    {
+                        return null;
+                    }
+            }
+        }
+
+        private UserControl GetNewInstance(Module userControl)
+        {
+            var name = userControl.MenuName;
+            switch (name)
+            {
+                case "主页":
+                    {
+                        return new Main();
+                    }
+                case "用户管理":
+                    {
+                        return new Users();
+                    }
+                case "权限管理":
+                    {
+                        return new EidtPermiss();
                     }
                 case "皮肤":
                     {

@@ -1,4 +1,5 @@
 ﻿using MyWpf.EF;
+using MyWpf.EF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace MyWpf.Dal
 {
-    public class MenuDal:BaseDal<menus>
+    public class MenuDal:BaseDal<Menu>
     {
-        public List<menus> QueryByIds(List<int> ids)
+        public List<Menu> QueryByIds(List<int> ids)
         {
-            return Db.menus.Where(m => ids.Contains(m.id)).ToList();
+            return Db.Menu.Where(m => ids.Contains(m.Id)).ToList();
         }
     }
 }

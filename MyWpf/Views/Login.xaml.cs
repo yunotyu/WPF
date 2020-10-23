@@ -1,4 +1,5 @@
-﻿using MyWpf.EF;
+﻿using MyWpf.Common;
+using MyWpf.EF;
 using MyWpf.Service;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,17 @@ namespace MyWpf
     /// <summary>
     /// Login.xaml 的交互逻辑
     /// </summary>
-    public partial class Login : Window
+    public partial class Login : WindowBase
     {
         public Login()
         {
             InitializeComponent();
-            this.ShowDialog();
         }
 
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            AppDbContext db = new AppDbContext();
+            db.Database.CreateIfNotExists();
+        }
     }
 }

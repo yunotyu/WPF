@@ -8,7 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ef/system.context.tt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ef/system.tt")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("image/%e6%b6%88%e6%81%af.png")]
 
 

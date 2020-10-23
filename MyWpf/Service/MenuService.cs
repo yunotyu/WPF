@@ -1,5 +1,6 @@
 ﻿using MyWpf.Dal;
 using MyWpf.EF;
+using MyWpf.EF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,16 @@ using System.Threading.Tasks;
 
 namespace MyWpf.Service
 {
-    public class MenuService
+    public class MenuService:BaseService<Menu>
     {
-        MenuDal dal = new MenuDal();
-
-        public List<menus> QueryByIds(List<int> ids)
+        public MenuService()
         {
-            return dal.QueryByIds(ids);
+            Dal = new MenuDal();
+        }
+
+        public List<Menu> QueryByIds(List<int> ids)
+        {
+            return (Dal as MenuDal).QueryByIds(ids);
         }
     }
 }
