@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -22,19 +23,30 @@ namespace MyWpf.Converters
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is string)
+            BitmapImage bitmapImage = null;
+            try
             {
-                var info = new FileInfo(value as string);
-                using (FileStream stream = new FileStream(info.FullName, FileMode.Open))
-                {   
-                    byte[] bytes = new byte[info.Length + 64];
-                    stream.Read(bytes, 0, System.Convert.ToInt32(info.Length));
-                    BitmapImage bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    bitmapImage.StreamSource = new MemoryStream(bytes);
-                    bitmapImage.EndInit();
-                    return bitmapImage;
+                if (value is string)
+                {
+                    var info = new FileInfo(value as string);
+                    using (FileStream stream = new FileStream(info.FullName, FileMode.Open))
+                    {
+                        byte[] bytes = new byte[info.Length + 64];
+                        stream.Read(bytes, 0, System.Convert.ToInt32(info.Length));
+                        bitmapImage = new BitmapImage();
+                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmapImage.BeginInit();
+                        bitmapImage.StreamSource = new MemoryStream(bytes);
+                        bitmapImage.EndInit();
+                        bitmapImage.Freeze();//冻结对象
+                        return bitmapImage;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                bitmapImage = null;
+                MessageBox.Show(e.Message);
             }
             return Binding.DoNothing;
         }

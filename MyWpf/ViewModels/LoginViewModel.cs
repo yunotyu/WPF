@@ -6,18 +6,29 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
+using Color = System.Windows.Media.Color;
 
 namespace MyWpf.ViewModels
 {
     public class LoginViewModel : ViewModelBase //这个是Prism.Wpf里的类,用于属性修改消息通知
     {
+        ~LoginViewModel()
+        {
+            //System.Windows.Forms.MessageBox.Show("LoginViewModel被析构");
+        }
         public UserService UserService { get; set; }
         public User_MenuService User_MenuService { get; set; }
+
+
 
         private string userName;
 
@@ -125,6 +136,8 @@ namespace MyWpf.ViewModels
             //加载用户名列表和加载上次登录用户的密码
             loadNameAndPwdCommand.ExcuteAction = new Action<object>(o =>
               {
+                
+                  Thread.Sleep(2000);
                   var config = JsonHelper.ReadJsonFileToStr<Configs>(AppDomain.CurrentDomain.BaseDirectory + @"config/configs.json");
                   if (config != null)
                   {
@@ -170,18 +183,29 @@ namespace MyWpf.ViewModels
         }
 
         //登录
-        public void Login(object param)
+        public async void Login(object param)
         {
-            var user = UserService.QueryByNameAndPwd(userName, pwd);
-
             Login loginWindow = param as Login;
+            //显示等待圆圈
+            loginWindow.loadPic.Visibility = Visibility.Visible;
 
+            User user = null;
+            await Task.Run(new Action(() =>
+            {
+                //模拟登陆等待时间
+                Thread.Sleep(2000);
+                user = UserService.QueryByNameAndPwd(userName, pwd);
+            }));
+            
+            
             if (user != null)
             {
                 AppCache.CurUser = user;
                 AppCache.Ids = User_MenuService.QueryMenuById(user.Id);
                 Home home = new Home();
                 home.Show();
+                //隐藏等待圆圈
+                loginWindow.loadPic.Visibility = Visibility.Hidden;
                 loginWindow.Close();
             }
             else
@@ -193,7 +217,6 @@ namespace MyWpf.ViewModels
             //先登录成功，再进行记录
             CheckRemeberPwd((bool)loginWindow.rememberPwd.IsChecked);
             loginWindow = null;
-
         }
 
         /// <summary>
@@ -236,27 +259,43 @@ namespace MyWpf.ViewModels
                     if (item.UserName == userName)
                     {
                         userConfig = item;
-                        //包含这个用户
+                        //这个用户有登录过
                         isContain = true;
                         item.Token = token;
+                       
                     }
                 }
+                //登录过
                 if (isContain)
                 {
                     //放到第一个位置
                     config.UserConfig.Remove(userConfig);
                     config.UserConfig.Insert(0, userConfig);
+
+                    //如果这个用户登录过,获取上次设置的主题颜色
+                    byte.TryParse(userConfig.R, out byte r);
+                    byte.TryParse(userConfig.G, out byte g);
+                    byte.TryParse(userConfig.B, out byte b);
+                    ThemeConfig.SkinColor = new SolidColorBrush(Color.FromRgb(r, g, b));
                 }
             }
+            //配置文件没有内容
             else
             {
                 config = new Configs();
             }
 
-            //不包含，添加
+            //没有登录过，添加
             if (!isContain)
             {
-                config.UserConfig.Insert(0, new UserConfig { UserName = userName, Token = token });
+                //没有登录过的用户，保存原始的主体颜色
+                var newUserConfig = new UserConfig { UserName = userName, Token = token };
+                var brush = ThemeConfig.SkinColor as SolidColorBrush;
+                newUserConfig.R = brush.Color.R.ToString();
+                newUserConfig.G = brush.Color.G.ToString();
+                newUserConfig.B = brush.Color.B.ToString();
+                config.UserConfig.Insert(0, newUserConfig);
+               
             }
 
             //保存信息到配置文件

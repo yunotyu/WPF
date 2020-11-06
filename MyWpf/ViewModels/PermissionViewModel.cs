@@ -14,6 +14,10 @@ namespace MyWpf.ViewModels
 {
     public class PermissionViewModel:ViewModelBase
     {
+        ~PermissionViewModel()
+        {
+            //System.Windows.Forms.MessageBox.Show("PermissionViewModel被析构");
+        }
         public UserService UserService { get; set; }
         public MenuService MenuService { get; set; }
         public User_MenuService User_MenuService { get; set; }

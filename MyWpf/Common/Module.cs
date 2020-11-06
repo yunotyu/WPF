@@ -29,22 +29,22 @@ namespace MyWpf
                 {
                     case "主页":
                         {
-                            iconCode = "Home";
+                            iconCode = "../../Image/home.png";
                             break;
                         }
                     case "用户管理":
                         {
-                            iconCode = "Users";
+                            iconCode = "../../Image/users.png";
                             break;
                         }
                     case "权限管理":
                         {
-                            iconCode = "Lock";
+                            iconCode = "../../Image/permiss.png";
                             break;
                         }
                     case "皮肤":
                         {
-                            iconCode = "TshirtV";
+                            iconCode = "../../Image/theme.png";
                             break;
                         }
                 }

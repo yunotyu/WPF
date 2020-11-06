@@ -25,6 +25,10 @@ namespace MyWpf.ViewModels
 {
     public class UsersViewModel:ViewModelBase
     {
+        ~UsersViewModel()
+        {
+            //System.Windows.Forms.MessageBox.Show("UsersViewModel被析构");
+        }
         public UserService  UserService { get; set; }
 
         private ObservableCollection<User> users;
@@ -176,8 +180,9 @@ namespace MyWpf.ViewModels
             closeCommand.ExcuteAction = new Action<object>(o =>
               {
                   Window win = o as Window;
+                  //Utils.ClearImageSource(win);//清除图片资源内存
                   win.Close();
-                  FlushMemory.Flush();
+                  //FlushMemory.Flush();
               });
 
             //moveCommand.ExcuteAction = new Action<object>(o =>

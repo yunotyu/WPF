@@ -37,15 +37,15 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <md:ColorZone Mode="PrimaryMid">
-        <TextBlock Margin="15,0,0,0" Text="添加用户" FontSize="20" VerticalAlignment="Top"></TextBlock>
-        </md:ColorZone>
+           <Border Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Margin="15,0,0,0" Text="添加用户" FontSize="20" VerticalAlignment="Top"></TextBlock>
+            </Border>
 
         <Grid Margin="0,0,100,20" Grid.Row="1">
             <Grid.RowDefinitions>
@@ -124,12 +124,12 @@
          
         </Grid>
         <StackPanel Margin="0,-20,0,20"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Column="1" Orientation="Horizontal" Grid.Row="2" >
-            <Button  Command="{Binding UploadHeaderCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Content="上传头像"></Button>
-            <Image Source="{Binding AddUserData.Icon, Mode=TwoWay,Converter={StaticResource imaToStr}}" Margin="40,0,0,0"></Image>
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Command="{Binding UploadHeaderCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Content="上传头像"></Button>
+            <Image x:Name="iii" Source="{Binding AddUserData.Icon, Mode=TwoWay,Converter={StaticResource imaToStr}}" Margin="40,0,0,0"></Image>
         </StackPanel>
         <StackPanel Margin="0,0,0,20" HorizontalAlignment="Right" Grid.Row="3" Orientation="Horizontal">
-            <Button Command="{Binding AddUserCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Margin="0,0,20,0" Content="保存"></Button>
-            <Button Margin="0,0,20,0" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" Content="关闭"></Button>
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding AddUserCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Margin="0,0,20,0" Content="保存"></Button>
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,20,0" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" Content="关闭"></Button>
         </StackPanel>
     </Grid>
 </common:WindowBase>

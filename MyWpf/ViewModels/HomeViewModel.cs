@@ -1,6 +1,4 @@
-﻿using LiveCharts;
-using LiveCharts.Wpf;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 using MyWpf.Commands;
 using MyWpf.Common;
 using MyWpf.EF;
@@ -24,6 +22,10 @@ namespace MyWpf.ViewModels
 {
     public class HomeViewModel: ViewModelBase
     {
+        ~HomeViewModel()
+        {
+            //System.Windows.Forms.MessageBox.Show("HomeViewModel被析构");
+        }
         public List<MyWpf.EF.Models.Menu> Menus { get; set; }
         public MenuService MenuService { get; set; }
 
@@ -32,6 +34,7 @@ namespace MyWpf.ViewModels
         /// </summary>
         public ObservableCollection<Module> Modules { get; set; }
 
+        DispatcherTimer timer;
 
         private Home home;
 
@@ -45,6 +48,18 @@ namespace MyWpf.ViewModels
             {
                 home = value;
                 this.RaisePropertyChanged("Home");
+            }
+        }
+
+        private string maxNormalPicPath;
+
+        public string MaxNormalPicPath
+        {
+            get { return maxNormalPicPath; }
+            set
+            {
+                maxNormalPicPath = value;
+                this.RaisePropertyChanged("MaxNormalPicPath");
             }
         }
 
@@ -150,8 +165,10 @@ namespace MyWpf.ViewModels
         public HomeViewModel()
         {
             CurrentTime = DateTime.Now.ToLongTimeString();
-            maxNormalKind = PackIconKind.WindowMaximize;//显示最大化按钮
-          
+            //maxNormalKind = PackIconKind.WindowMaximize;//显示最大化按钮
+
+            MaxNormalPicPath = "../../Image/max.png";
+
             //moveCommand.ExcuteAction = new Action<object>((o) =>
             //{
             //    var win = o as Window;
@@ -181,13 +198,15 @@ namespace MyWpf.ViewModels
                 {
                     home.WindowState = WindowState.Normal;
                     var vm = home.DataContext as HomeViewModel;
-                    MaxNormalKind = PackIconKind.WindowMaximize;//显示最大化按钮
+                    //MaxNormalKind = PackIconKind.WindowMaximize;//显示最大化按钮
+                    MaxNormalPicPath = "../../Image/max.png";
                 }
                 else if(home.WindowState == WindowState.Normal)
                 {
                     home.WindowState = WindowState.Maximized;
                     var vm= home.DataContext as HomeViewModel;
-                    MaxNormalKind = PackIconKind.WindowRestore;//正常尺寸化窗体按钮
+                    //MaxNormalKind = PackIconKind.WindowRestore;//正常尺寸化窗体按钮
+                    MaxNormalPicPath = "../../Image/normal.png";
                 }
             });
 
@@ -198,12 +217,19 @@ namespace MyWpf.ViewModels
               {
                   List<object> li = new List<object>();
                   li = o as List<object>;
+
+                  if ((int)li[1] < 0)
+                  {
+                      return;
+                  }
+
                   Home win = li[0] as Home;
                   (win.DataContext as HomeViewModel).User.IsEditLogingUser = false;
                   home = win;//记录当前主窗体对象，在传递到其他页面时，可以使用
                   int index = (int)li[1];
                   if (win != null)
                   {
+                      //Utils.ClearChart(win);
                       //var newModule = GetNewInstance(Modules[index]);
                       win.mainContent.Content = Modules[index].Content;
                       GC.Collect();
@@ -220,6 +246,7 @@ namespace MyWpf.ViewModels
                   (home.DataContext as HomeViewModel).User = u;
                   u.IsEditLogingUser = true;
                   u.ConfirmPwd = u.Pwd;//第一次打开，让相等
+                  //Utils.ClearChart(home);//记得离开chart控件界面时，释放资源
                   home.mainContent.Content =editLoginingUser.Content;
               });
 
@@ -230,11 +257,14 @@ namespace MyWpf.ViewModels
                   Window window = GetEleTopParent(o as FrameworkElement) as Window;
                   Login login = new Login();
                   login.Show();
+                  if (Modules.Where(m => m.MenuName == "主页").Count() > 0)
+                  {
+                      Utils.ClearChart(Modules.Where(m => m.MenuName == "主页").FirstOrDefault().Content);
+                  }
+                  Modules.Clear();
+                  timer.Stop();
                   window.Close();
-                  home = null;
-                  Modules = null;
-                  window = null;
-                  GC.Collect();
+                  
               });
 
             //获取用户对应权限菜单
@@ -259,9 +289,12 @@ namespace MyWpf.ViewModels
         public void WindowLoaded(object sender, RoutedEventArgs e)
         {
             Home home = sender as Home;
-            home.mainContent.Content = new Main().Content;
+            if(Modules.Where(m => m.MenuName == "主页").Count() > 0)
+            {
+                home.mainContent.Content = Modules.Where(m => m.MenuName == "主页").FirstOrDefault().Content;
+            }
 
-            DispatcherTimer timer = new DispatcherTimer();
+            timer = new DispatcherTimer();
             timer.Tick+=new EventHandler(new Action<object,EventArgs>((sen,eve)=> 
             {
                 (home.DataContext as HomeViewModel).CurrentTime = DateTime.Now.ToLongTimeString();
@@ -302,32 +335,5 @@ namespace MyWpf.ViewModels
             }
         }
 
-        private UserControl GetNewInstance(Module userControl)
-        {
-            var name = userControl.MenuName;
-            switch (name)
-            {
-                case "主页":
-                    {
-                        return new Main();
-                    }
-                case "用户管理":
-                    {
-                        return new Users();
-                    }
-                case "权限管理":
-                    {
-                        return new EidtPermiss();
-                    }
-                case "皮肤":
-                    {
-                        return new Skin();
-                    }
-                default:
-                    {
-                        return null;
-                    }
-            }
-        }
     }
 }

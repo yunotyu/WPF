@@ -15,12 +15,14 @@ using MyWpf.AttachProperty;
 using System.IO;
 using System.Drawing;
 using MyWpf.EF.Models;
-using LiveCharts.Wpf;
 using System.Collections.ObjectModel;
-using LiveCharts;
 using System.Windows.Media;
-using LiveCharts.Configurations;
 using System.Security.RightsManagement;
+using MessageBox = System.Windows.Forms.MessageBox;
+using MyWpf.Common;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
+using Brush = System.Windows.Media.Brush;
 
 namespace MyWpf.ViewModels
 {
@@ -50,6 +52,8 @@ namespace MyWpf.ViewModels
         /// 屏幕的工作区的最大宽度
         /// </summary>
         public double WinMaxWidth { get; set; }
+
+        public List<ThemeColor> Colors { get; set; }
 
         protected DelegateCommand closeCommand;
 
@@ -213,8 +217,8 @@ namespace MyWpf.ViewModels
             }
         }
 
+       
 
-        public CartesianMapper<Store> Config { get; set; }
 
         public ViewModelBase()
         {
@@ -229,6 +233,21 @@ namespace MyWpf.ViewModels
             uploadHeaderCommand = new DelegateCommand();
             deleteCommand = new DelegateCommand();
             searchCommand = new DelegateCommand();
+           
+            Colors = new List<ThemeColor>();
+
+           
+            
+            //Colors.AddRange(new List<ThemeColor>
+            //{
+            //    new ThemeColor{ SkinColor=Brushes.SkyBlue },
+            //    new ThemeColor{ SkinColor=new SolidColorBrush(Color.FromRgb(0X33,0X99,0X99)) },
+            //    new ThemeColor{ SkinColor= new SolidColorBrush(Color.FromRgb(0XFF,0XCC,0X33)) },
+            //    new ThemeColor{ SkinColor=new SolidColorBrush(Color.FromRgb(0XFF,0XFF,0X33)) },
+            //    new ThemeColor{ SkinColor=new SolidColorBrush(Color.FromRgb(0XCC,0,0)) },
+            //    new ThemeColor{ SkinColor=new SolidColorBrush(Color.FromRgb(0X33,0X99,0X99)) },
+         
+            //});
 
             //上传头像
             uploadHeaderCommand = new DelegateCommand();
@@ -278,54 +297,66 @@ namespace MyWpf.ViewModels
         /// <param name="window"></param>
         private void UploadHeaderPic(Window window)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "png|*.png|jpg|*.jpg|bmp|*.bmp";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            OpenFileDialog openFileDialog = null;
+            FileStream fileStream = null;
+            try
             {
-                FileInfo info = new FileInfo(openFileDialog.FileName);
-                var fileExtension = info.Extension;
-                if (!info.Exists)
+                openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "(png,jpg,bmp)|*.png;*.jpg;*.bmp";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    ShowTip("文件不存在", window);
-                    return;
-                }
-                if (fileExtension == ".png" || fileExtension == ".jpg" || fileExtension == ".bmp")
-                {
-                    using (FileStream fileStream = new FileStream(openFileDialog.FileName, FileMode.Open))
+                    FileInfo info = new FileInfo(openFileDialog.FileName);
+                    var fileExtension = info.Extension;
+                    if (!info.Exists)
                     {
-                        //判断照片的大小
-                        if (info.Length > 1048576)
+                        ShowTip("文件不存在", window);
+                        return;
+                    }
+                    if (fileExtension == ".png" || fileExtension == ".jpg" || fileExtension == ".bmp")
+                    {
+                        using (fileStream = new FileStream(openFileDialog.FileName, FileMode.Open))
                         {
-                            ShowTip("图片大于1M", window);
-                            return;
-                        }
-                        Bitmap bitmap = new Bitmap(fileStream);
-                        var newFileName = (info.Name.Split('.'))[0] + "_" + Guid.NewGuid().ToString() + fileExtension;
-                        //var root = Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).FullName).FullName;
-                        bitmap.Save(@"HeaderPic/" + newFileName);
-                        if (window is EditUser)
-                        {
-                            EditUserData.Icon = @"HeaderPic/" + newFileName;
+                            //判断照片的大小
+                            if (info.Length > 1048576)
+                            {
+                                ShowTip("图片大于1M", window);
+                                return;
+                            }
+                            Bitmap bitmap = new Bitmap(fileStream);
+                            var newFileName = (info.Name.Split('.'))[0] + "_" + Guid.NewGuid().ToString() + fileExtension;
+                            //var root = Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).FullName).FullName;
+                            bitmap.Save(@"HeaderPic/" + newFileName);
+                            if (window is EditUser)
+                            {
+                                EditUserData.Icon = @"HeaderPic/" + newFileName;
 
+                            }
+                            else if (window is AddUser)
+                            {
+                                AddUserData.Icon = @"HeaderPic/" + newFileName;
+                            }
+                            else if (window is Home)
+                            {
+                                (window.DataContext as HomeViewModel).User.Icon = @"HeaderPic/" + newFileName;
+                            }
+
+                            //EditUserData.ImaSource = new BitmapImage(new Uri(@"/Image/" + newFileName, UriKind.Relative));
+                            ShowTip("上传成功", window);
                         }
-                        else if (window is AddUser)
-                        {
-                            AddUserData.Icon = @"HeaderPic/" + newFileName;
-                        }
-                        else if(window is Home)
-                        {
-                            (window.DataContext as HomeViewModel).User.Icon= @"HeaderPic/" + newFileName;
-                        }
-                        
-                        //EditUserData.ImaSource = new BitmapImage(new Uri(@"/Image/" + newFileName, UriKind.Relative));
-                        ShowTip("上传成功", window);
+                    }
+                    else
+                    {
+                        ShowTip("请选择正确的图像文件", window);
+                        return;
                     }
                 }
-                else
-                {
-                    ShowTip("请选择正确的图像文件", window);
-                    return;
-                }
+            }
+            catch (Exception e)
+            {
+                openFileDialog.Dispose();
+                fileStream.Close();
+                fileStream.Dispose();
+                MessageBox.Show(e.Message);
             }
         }
 
@@ -333,84 +364,92 @@ namespace MyWpf.ViewModels
         /// <summary>
         /// 初始化坐标轴
         /// </summary>
-        private void InitChartAxi(CartesianChart chart,string Xname,string yName)
-        {
-            Config  = Mappers.Xy<Store>()
-                             .X(s => Convert.ToInt32(s.Time.AddHours(8).Subtract(DateTime.Parse("1970-1-1")).TotalSeconds))
-                             .Y(s=>s.Count);
+        //private void InitChartAxi(CartesianChart chart,string Xname,string yName)
+        //{
+        //    //Config  = Mappers.Xy<Store>()
+        //    //                 .X(s => Convert.ToInt32(s.Time.AddHours(8).Subtract(DateTime.Parse("1970-1-1")).TotalSeconds))
+        //    //                 .Y(s=>s.Count);
 
-            //初始化图表的x轴
-            Axis x = new Axis();
-            x.Separator.StrokeThickness = 1;
-            x.Separator.Stroke = System.Windows.Media.Brushes.Black;
-            x.Separator.Step = TimeSpan.FromDays(31).TotalSeconds;
-            x.Title = Xname;
-            x.ShowLabels = true;
-            x.LabelFormatter = (d => DateTime.Parse("1970-01-01 00:00:00").AddSeconds(d - 8 * 60 * 60).ToLongDateString());
-            //System.Windows.Data.Binding xBinding = new System.Windows.Data.Binding();
-            //xBinding.Source = this;//绑定数据源
-            //xBinding.Path = new PropertyPath("XLabels");//绑定的数据源的属性名
-            //xBinding.Mode = System.Windows.Data.BindingMode.TwoWay;
-            //xBinding.UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged;
-            ////将控件属性和数据源属性绑定到一起
-            //x.SetBinding(Axis.LabelsProperty, xBinding);
-            chart.AxisX.Add(x);
+        //    //初始化图表的x轴
+        //    Axis x = new Axis();
+        //    //var x = chart.AxisX[0];
+        //    x.Separator.StrokeThickness = 1;
+        //    x.Separator.Stroke = System.Windows.Media.Brushes.Black;
+        //    x.Separator.Step = TimeSpan.FromDays(31).TotalSeconds;
+        //    x.Title = Xname;
+        //    x.ShowLabels = true;
+        //    x.Labels = new List<string> { "1", "2", "3", "4", "5", "6" };
+        //    //x.LabelFormatter = (d => DateTime.Parse("1970-01-01 00:00:00").AddSeconds(d - 8 * 60 * 60).ToLongDateString());
+        //    //System.Windows.Data.Binding xBinding = new System.Windows.Data.Binding();
+        //    //xBinding.Source = this;//绑定数据源
+        //    //xBinding.Path = new PropertyPath("XLabels");//绑定的数据源的属性名
+        //    //xBinding.Mode = System.Windows.Data.BindingMode.TwoWay;
+        //    //xBinding.UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged;
+        //    ////将控件属性和数据源属性绑定到一起
+        //    //x.SetBinding(Axis.LabelsProperty, xBinding);
+        //    chart.AxisX.Add(x);
 
-            //初始化图表y轴
-            Axis y = new Axis();
-            y.Separator.StrokeThickness = 1;
-            y.Separator.Stroke = System.Windows.Media.Brushes.Black;
-            y.Title = yName;
-            y.ShowLabels = true;
-            //System.Windows.Data.Binding yBinding = new System.Windows.Data.Binding();
-            //yBinding.Source = this;
-            //yBinding.Path = new PropertyPath("YLabels");
-            //yBinding.Mode = System.Windows.Data.BindingMode.TwoWay;
-            //yBinding.UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged;
-            //y.SetBinding(Axis.LabelsProperty, yBinding);
-            chart.AxisY.Add(y);
+        //    //初始化图表y轴
+        //    Axis y = new Axis();
+        //    //var y = chart.AxisY[0];
+        //    y.Separator.StrokeThickness = 1;
+        //    y.Separator.Stroke = System.Windows.Media.Brushes.Black;
+        //    y.Title = yName;
+        //    y.ShowLabels = true;
+        //    y.Labels = new List<string> { "1", "2", "3", "4", "5", "6" };
+
+        //    //System.Windows.Data.Binding yBinding = new System.Windows.Data.Binding();
+        //    //yBinding.Source = this;
+        //    //yBinding.Path = new PropertyPath("YLabels");
+        //    //yBinding.Mode = System.Windows.Data.BindingMode.TwoWay;
+        //    //yBinding.UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged;
+        //    //y.SetBinding(Axis.LabelsProperty, yBinding);
+        //    chart.AxisY.Add(y);
             
-        }
+        //}
 
-        /// <summary>
-        /// 绘制曲线
-        /// </summary>
-        /// <param name="chart"></param>
-        /// <param name="points"></param>
-        private void PaintLine(CartesianChart chart,SeriesCollection series, ChartValues<Store> points,string lineName)
-        {
-            System.Windows.Data.Binding binding = new System.Windows.Data.Binding();
-            binding.Source = this;
-            binding.Mode = System.Windows.Data.BindingMode.TwoWay;
-            binding.Path = new PropertyPath("Series");
-            chart.SetBinding(CartesianChart.SeriesProperty, binding);
+        ///// <summary>
+        ///// 绘制曲线
+        ///// </summary>
+        ///// <param name="chart"></param>
+        ///// <param name="points"></param>
+        //private void PaintLine(CartesianChart chart,SeriesCollection series, ChartValues<Store> points,string lineName)
+        //{
+        //    //System.Windows.Data.Binding binding = new System.Windows.Data.Binding();
+        //    //binding.Source = this;
+        //    //binding.Mode = System.Windows.Data.BindingMode.TwoWay;
+        //    //binding.Path = new PropertyPath("Series");
+        //    //chart.SetBinding(CartesianChart.SeriesProperty, binding);
 
-            var line = new LineSeries(Config)
-            {
-                Title = lineName,
-                StrokeThickness = 2,
-                Values = points,
-                LineSmoothness = 1,
-                //Fill = System.Windows.Media.Brushes.Transparent,
-                //LabelPoint = new Func<ChartPoint, string>((c) =>
-                //  {
-                //      return $"时间:{c.X},进货量:{c.Y}";
-                //  }),
-                DataLabels = true,
-                LabelPoint = p => p.Y.ToString(),
 
-            };
-            series.Add(line);
-        }
+        //    //var line = new LineSeries(Config)
+        //    var line = new LineSeries()
+        //    {
+        //        Title = lineName,
+        //        StrokeThickness = 2,
+        //        //Values = points,
+        //        Values = new ChartValues<int> { 1, 2, 3, 4, 5, 6 },
+        //        LineSmoothness = 1,
+        //        //Fill = System.Windows.Media.Brushes.Transparent,
+        //        //LabelPoint = new Func<ChartPoint, string>((c) =>
+        //        //  {
+        //        //      return $"时间:{c.X},进货量:{c.Y}";
+        //        //  }),
+        //        DataLabels = true,
+        //        LabelPoint = p => p.Y.ToString(),
 
-        /// <summary>
-        /// 绘制图表
-        /// </summary>
-        public virtual void InitChart(CartesianChart chart,SeriesCollection series, string Xname, string yName, ChartValues<Store> points, string lineName)
-        {
-            InitChartAxi(chart, Xname, yName);
-            PaintLine(chart, series, points, lineName);
-        }
+        //    };
+        //    series.Add(line);
+        //}
+
+        ///// <summary>
+        ///// 绘制图表
+        ///// </summary>
+        //public virtual void InitChart(CartesianChart chart,SeriesCollection series, string Xname, string yName, ChartValues<Store> points, string lineName)
+        //{
+        //    InitChartAxi(chart, Xname, yName);
+        //    PaintLine(chart, series, points, lineName);
+        //}
 
         /// <summary>
         /// 递归获取元素的最顶级父元素

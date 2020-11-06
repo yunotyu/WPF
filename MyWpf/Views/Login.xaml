@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:MyWpf"
         xmlns:base="clr-namespace:MyWpf.Common"
         mc:Ignorable="d"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:MyWpf.ViewModels"
         xmlns:pwd="clr-namespace:MyWpf.Common"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
@@ -15,7 +14,7 @@
         AllowsTransparency="True"
        >
     <Window.Background>
-        <ImageBrush ImageSource="../Image/login.jpg" Stretch="Fill" Opacity="0.7" ></ImageBrush>
+        <ImageBrush  ImageSource="../Image/login.jpg" Stretch="Fill" Opacity="0.7" ></ImageBrush>
     </Window.Background>
 
     <Window.DataContext>
@@ -37,10 +36,10 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadNameAndPwdCommand}"></i:InvokeCommandAction>
+            <i:InvokeCommandAction Command="{Binding LoadNameAndPwdCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"></i:InvokeCommandAction>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-        
+
      <!--设置获得焦点的元素-->
     <Grid FocusManager.FocusedElement="{Binding ElementName=NameTextBox}" Loaded="Grid_Loaded">
 
@@ -55,31 +54,39 @@
             <ColumnDefinition Width="4*"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-
-        <materialDesign:PackIcon Height="30" Width="30" Grid.Row="0" Grid.Column="2"  Kind="WindowClose" HorizontalAlignment="Right" Cursor="Hand" Margin="0,0,8,0" >
+        
+        <!--加载圆圈显示位置-->
+        <ContentControl HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Hidden" x:Name="loadPic" Grid.Row="1" Grid.Column="1">
+            <local:LoadingUserControl Height="100" Width="100"></local:LoadingUserControl>
+        </ContentControl>
+        
+        <Button   Height="30" Width="30" Grid.Row="0" Grid.Column="2"  HorizontalAlignment="Right" Cursor="Hand" Margin="0,0,8,0" >
             <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDown">
+                <i:EventTrigger EventName="Click">
                     <i:InvokeCommandAction Command="{Binding CloseCommand}"></i:InvokeCommandAction>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-        </materialDesign:PackIcon>
+            <Button.Background>
+                <ImageBrush  ImageSource="../Image/close.png"></ImageBrush>
+            </Button.Background>
+        </Button>
 
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
-            <ComboBox  IsEditable="True" ItemsSource="{Binding UserNames}" Text="{Binding Path=UserName}" Margin="0,30,0,0" Width="250" Height="40" FontSize="25" x:Name="NameTextBox" materialDesign:HintAssist.Hint="用户名" >
+            <ComboBox  IsEditable="True" ItemsSource="{Binding UserNames}" Text="{Binding Path=UserName}" Margin="0,30,0,0" Width="250" Height="40" FontSize="25" x:Name="NameTextBox"  >
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding SelectChangeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ComboBox, Mode=FindAncestor}}"></i:InvokeCommandAction>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
-            <PasswordBox pwd:PasswordBoxHelper.Attach ="True"  pwd:PasswordBoxHelper.Password="{Binding Pwd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,20,0,0" Width="250" Height="40" FontSize="25" x:Name="PasswordBox" materialDesign:HintAssist.Hint="密码" />
+            <PasswordBox pwd:PasswordBoxHelper.Attach ="True"  pwd:PasswordBoxHelper.Password="{Binding Pwd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,20,0,0" Width="250" Height="40" FontSize="25" x:Name="PasswordBox"  />
         </StackPanel>
         <StackPanel Margin="50,0,0,0" Orientation="Horizontal"  Grid.Row="2" Grid.Column="1" >
             <CheckBox IsChecked="True"  VerticalAlignment="Center" x:Name="rememberPwd" IsThreeState="False">
             </CheckBox>
             <TextBlock Margin="7,0,0,0" VerticalAlignment="Center" FontSize="15" Text="记住密码"></TextBlock>
         </StackPanel>
-        <Button IsDefault="True" Command="{Binding LoginCommand}" VerticalAlignment="Top" Height="40" Width="200" Grid.Row="3" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedButton}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+        <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsDefault="True" Command="{Binding LoginCommand}" VerticalAlignment="Top" Height="40" Width="200" Grid.Row="3" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedButton}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
             登录
         </Button>
     </Grid>

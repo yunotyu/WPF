@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:Interaction="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:MyWpf"
@@ -50,7 +49,7 @@
     </Window.Effect>
 
     <!--主窗体作为宿主-->
-    <materialDesign:DialogHost >
+    <!--<materialDesign:DialogHost >-->
 
         <!--弹出的菜单栏放在左边的空白地方
         IsLeftDrawerOpen设置是否展开-->
@@ -85,7 +84,7 @@
 
             
             <!--菜单栏部分-->
-            <materialDesign:ColorZone Height="720" Mode="PrimaryMid" Grid.Row="1" Grid.Column="0">
+        <Border Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Grid.Row="1" Grid.Column="0">
                 <StackPanel   Orientation="Vertical"  >
 
                     <!--菜单栏部分-->
@@ -109,8 +108,8 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <materialDesign:PackIcon  Kind="{Binding Path=IconCode}"  Height="60" Width="30" >
-                                    </materialDesign:PackIcon>
+                                <Image Source="{Binding IconCode, Converter={StaticResource imaToStr}}" Height="60" Width="30" >
+                                    </Image>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -149,18 +148,18 @@
                         </ListBox.ItemContainerStyle>
                     </ListBox>
                 </StackPanel>
-            </materialDesign:ColorZone>
+            </Border>
 
 
             <!--工具栏部分-->
-            <materialDesign:ColorZone Grid.ColumnSpan="2"  Grid.Row="0" Grid.Column="0" Mode="PrimaryMid" Padding="0,20,0,20" >
+        <Border x:Name="tool" Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"  Grid.Row="0" Grid.Column="0"  Padding="0,20,0,20" >
                 <Grid x:Name="imaData">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-
+                    
                     <!--头像部分-->
                     <Image Margin="0,0,30,0"  HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"  Source="{Binding Path=User.Icon,Converter={StaticResource imaToStr}}"  Height="40" Width="40" >
                         <Image.ToolTip>
@@ -189,52 +188,60 @@
                     </Image>
                     <!--<Button Content="11" Click="Button_Click"></Button>-->
                     <TextBlock  HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Cursor="Hand" Text="Welcome !" VerticalAlignment="Center" FontSize="25" FontWeight="Bold" ></TextBlock>
-
                     
                     <StackPanel  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" >
                         <!--MD默认的按钮样式就是鼠标移到那就是手状-->
-                        <Button Command="{Binding MinCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}" Margin="0,0,0,0" BorderThickness="0"  Height="50" Width="60" VerticalAlignment="Top"  Background="Transparent">
+                    <Button Command="{Binding MinCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}" Margin="0,0,20,0" BorderThickness="0"  Height="20" Width="20" VerticalAlignment="Top" >
                             <Button.ToolTip>
                                 <ToolTip>
                                     最小化
                                 </ToolTip>
                             </Button.ToolTip>
-                            <materialDesign:PackIcon Kind="WindowMinimize"  Height="20" Width="30"  >
-                            </materialDesign:PackIcon>
-                        </Button>
+                            <!--<materialDesign:PackIcon Kind="WindowMinimize"  Height="20" Width="30"  >
+                            </materialDesign:PackIcon>-->
+                        <Button.Background>
+                            <ImageBrush ImageSource="../Image/mini.png"></ImageBrush>
+                        </Button.Background>
+                    </Button>
 
                         <!---->
-                        <Button  Margin="0,0,0,0" BorderThickness="0" Command="{Binding MaxNormalCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"  Height="50" Width="60" VerticalAlignment="Top"  Background="Transparent">
+                    <Button  Margin="0,0,20,0" BorderThickness="0" Command="{Binding MaxNormalCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"  Height="20" Width="20" VerticalAlignment="Top"  >
                             <!--Kind绑定，可以切换按钮形态 Kind="{Binding MaxNormalKind , Mode=TwoWay}"-->
-                            <materialDesign:PackIcon   Kind="{Binding MaxNormalKind , Mode=TwoWay}"  Height="20" Width="30">
-                            </materialDesign:PackIcon>
+                            <!--<materialDesign:PackIcon   Kind="{Binding MaxNormalKind , Mode=TwoWay}"  Height="20" Width="30">
+                            </materialDesign:PackIcon>-->
                             <Button.ToolTip>
                                   <ToolTip>
                                     最大化
                                 </ToolTip>
                             </Button.ToolTip>
-                        </Button>
+                        <Button.Background>
+                            <ImageBrush ImageSource="{Binding MaxNormalPicPath, Converter={StaticResource imaToStr}}"></ImageBrush>
+                        </Button.Background>
+                    </Button>
 
-                        <Button x:Name="b" Command="{Binding CloseCommand}"   BorderThickness="0"  Height="50" Width="60" VerticalAlignment="Top"  Background="Transparent">
-                            <materialDesign:PackIcon Kind="Close"   Height="20" Width="30">
-                            </materialDesign:PackIcon>
+                    <Button x:Name="b" Command="{Binding CloseCommand}" Margin="-5,-4,5,0"   BorderThickness="0"  Height="30" Width="30" VerticalAlignment="Top"  >
+                            <!--<materialDesign:PackIcon Kind="Close"   Height="20" Width="30">
+                            </materialDesign:PackIcon>-->
                             <Button.ToolTip>
                                 <ToolTip >
                                     关闭
                                 </ToolTip>
                             </Button.ToolTip>
+                        <Button.Background>
+                            <ImageBrush ImageSource="../Image/close.png"></ImageBrush>
+                        </Button.Background>
                         </Button>
                     </StackPanel>
 
                 </Grid>
-            </materialDesign:ColorZone >
+            </Border >
 
             <!--主要内容部分-->
             <ContentControl Margin="0,80,0,0" x:Name="mainContent" Grid.Row="1" Grid.Column="1" >
             </ContentControl>
             
             <!--状态栏部分-->
-            <materialDesign:ColorZone Height="30" Mode="PrimaryMid" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+        <Border Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="30"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                 <StatusBar VerticalAlignment="Center" >
                     <StatusBar.Template>
                         <ControlTemplate TargetType="StatusBar">
@@ -248,7 +255,7 @@
                     <TextBlock Margin="30,0,0,0"  Text="时间:"></TextBlock>
                     <TextBlock Margin="0,0,40,0" Text="{Binding CurrentTime}"></TextBlock>
                 </StatusBar>
-            </materialDesign:ColorZone>
+            </Border>
         </Grid>
-    </materialDesign:DialogHost>
+    <!--</materialDesign:DialogHost>-->
 </base:WindowBase>

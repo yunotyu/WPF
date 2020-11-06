@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +27,9 @@ namespace MyWpf
     {
         public Login()
         {
+            
             InitializeComponent();
+          
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

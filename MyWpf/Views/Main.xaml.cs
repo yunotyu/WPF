@@ -36,7 +36,6 @@ namespace MyWpf.Views
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(this.chart.Name);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -45,7 +44,6 @@ namespace MyWpf.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var c = this.chart;
             new TextBox().KeyDown += Main_KeyDown;
         }
 
@@ -53,5 +51,6 @@ namespace MyWpf.Views
         {
             throw new NotImplementedException();
         }
+       
     }
 }

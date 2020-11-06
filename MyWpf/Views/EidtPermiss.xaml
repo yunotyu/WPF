@@ -27,7 +27,7 @@
         <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="40,0,0,0">
             <TextBox Text="" x:Name="searchTextbox" FontSize="15" Background="WhiteSmoke" Width="400" VerticalAlignment="Center" Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
                       materialDesign:HintAssist.Hint="请输入姓名"></TextBox>
-            <Button Command=""
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Command=""
                     Margin="15,0,0,0">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" >
@@ -41,9 +41,9 @@
         <!--姓名部分-->
         <Border Margin="20,20,0,0" BorderThickness="1" BorderBrush="Black"  Grid.Row="1" Grid.Column="0">
             <StackPanel>
-                <materialDesign:ColorZone Mode="PrimaryMid">
-                    <TextBlock Text="选择用户" HorizontalAlignment="Center" FontSize="25"></TextBlock>
-                </materialDesign:ColorZone>
+                    <Border  Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBlock Text="选择用户" HorizontalAlignment="Center" FontSize="25"></TextBlock>
+                    </Border>
                 <ListBox SelectionMode="Single" x:Name="userListBox"  ItemsSource="{Binding Source={StaticResource vm}, Path=Users}" DisplayMemberPath="Name" >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
@@ -63,9 +63,9 @@
                     <RowDefinition Height="50"></RowDefinition>
                 </Grid.RowDefinitions>
                 <StackPanel>
-                    <materialDesign:ColorZone Mode="PrimaryMid">
-                        <TextBlock Text="选择权限" HorizontalAlignment="Center" FontSize="25"></TextBlock>
-                    </materialDesign:ColorZone>
+                        <Border Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                           <TextBlock Text="选择权限" HorizontalAlignment="Center" FontSize="25"></TextBlock>
+                        </Border>
                     <!--用户对应权限部分-->
                     <ListBox SelectionMode="Multiple" x:Name="permissListBox" Grid.Row="1" Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" ItemsSource="{Binding Source={StaticResource vm}, Path=Menus}">
                         <ListBox.ItemContainerStyle>
@@ -87,7 +87,7 @@
                 </StackPanel>
                 
                 <!--保存-->
-                <Button Grid.Row="1" Command="{Binding Source={StaticResource vm},Path=SavePermissCommand }" VerticalAlignment="Center" Content="保存" Width="200">
+                <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Command="{Binding Source={StaticResource vm},Path=SavePermissCommand }" VerticalAlignment="Center" Content="保存" Width="200">
                     <Button.CommandParameter>
                         <MultiBinding Converter="{StaticResource multiParam}">
                             <Binding Source="{x:Reference Name=userListBox}"></Binding>

@@ -54,6 +54,11 @@ namespace MyWpf
         {
 
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            tool.Background = Brushes.Gray;
+        }
     }
 
     

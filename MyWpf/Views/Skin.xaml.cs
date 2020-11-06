@@ -26,12 +26,5 @@ namespace MyWpf
         {
             InitializeComponent();
         }
-
-        ~Skin()
-        {
-            MessageBox.Show("SKin销毁");
-        }
-
-    
     }
 }

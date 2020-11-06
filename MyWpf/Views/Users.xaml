@@ -30,7 +30,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
             <TextBox Text="{Binding Source={StaticResource users}, Path=SearchText}" x:Name="searchTextbox" FontSize="15" Background="WhiteSmoke" Width="500" VerticalAlignment="Center" Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"
                       materialDesign:HintAssist.Hint="请输入搜索内容"></TextBox>
-            <Button Command="{Binding Source={StaticResource users},Path=SearchCommand}"
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users},Path=SearchCommand}"
                     Margin="15,0,0,0">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" >
@@ -43,7 +43,7 @@
         
         <!--保存，添加..-->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Margin="0,0,20,0">
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,20,0">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" >
                         <materialDesign:PackIcon Kind="PlaylistCheck" />
@@ -53,7 +53,7 @@
             </Button>
             
             <!--{Binding}传递的是，父窗体的数据源HomeViewModel-->
-            <Button Command="{Binding Source={StaticResource users}, Path=AddUserDiaCommand}"  Margin="0,0,20,0" >
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users}, Path=AddUserDiaCommand}"  Margin="0,0,20,0" >
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource multi}">
                         <Binding></Binding>
@@ -68,8 +68,8 @@
                     </StackPanel>
                 </Button.Content>
             </Button>
-            
-            <Button Command="{Binding Source={StaticResource users}, Path=DeleteCommand}" Margin="0,0,20,0" >
+
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users}, Path=DeleteCommand}" Margin="0,0,20,0" >
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" >
                         <materialDesign:PackIcon Kind="PlaylistRemove" />
@@ -77,8 +77,8 @@
                     </StackPanel>
                 </Button.Content>
             </Button>
-            
-            <Button Margin="0,0,20,0">
+
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,20,0">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" >
                         <materialDesign:PackIcon Kind="PlaylistPlay" />
@@ -141,18 +141,18 @@
                 <TextBox x:Name="gotoPage" Text="{Binding Source={StaticResource users}, Path=Page.CurPage,Mode=TwoWay}"  BorderThickness="0" Style="{x:Null}" FontSize="20" Height="40" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="40" ></TextBox>
                 <TextBlock FontSize="15" VerticalAlignment="Center" Text="页"></TextBlock>
             </StackPanel>
-            <Button Command="{Binding Source={StaticResource users}, Path=GotoCommand}" CommandParameter="{Binding Source={x:Reference Name=gotoPage},Path=Text}"  Margin="0,0,20,0"  Content="前往"></Button>
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users}, Path=GotoCommand}" CommandParameter="{Binding Source={x:Reference Name=gotoPage},Path=Text}"  Margin="0,0,20,0"  Content="前往"></Button>
             
             <StackPanel Orientation="Horizontal">
                 <TextBlock  Margin="0,0,10,0"  FontSize="20" Text="共" VerticalAlignment="Center"></TextBlock>
                 <TextBlock    FontSize="20" Text="{Binding Source={StaticResource users}, Path=Page.AllPageCount,Mode=TwoWay}" VerticalAlignment="Center"></TextBlock>
                 <TextBlock  Margin="10,0,20,0"  FontSize="20" Text="页" VerticalAlignment="Center"></TextBlock>
             </StackPanel>
-            
-            <Button Command="{Binding Source={StaticResource users}, Path=FirstCommand}" Margin="0,0,10,0"  Content="首页"></Button>
-            <Button Command="{Binding Source={StaticResource users}, Path=PrevCommand}" Margin="0,0,10,0"  Content="上一页"></Button>
-            <Button Command="{Binding Source={StaticResource users}, Path=NextCommand}" Margin="0,0,10,0"  Content="下一页"></Button>
-            <Button Command="{Binding Source={StaticResource users}, Path=LastCommand}" Margin="0,0,10,0"  Content="尾页"></Button>
+
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users}, Path=FirstCommand}" Margin="0,0,10,0"  Content="首页"></Button>
+            <Button Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users}, Path=PrevCommand}" Margin="0,0,10,0"  Content="上一页"></Button>
+            <Button  Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users}, Path=NextCommand}" Margin="0,0,10,0"  Content="下一页"></Button>
+            <Button  Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Source={StaticResource users}, Path=LastCommand}" Margin="0,0,10,0"  Content="尾页"></Button>
         </StackPanel>
     </Grid>
 </UserControl>

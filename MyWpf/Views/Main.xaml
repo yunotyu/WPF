@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MyWpf.Views"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:chart="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:inter="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:ch="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
              xmlns:vm="clr-namespace:MyWpf.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" >
@@ -15,12 +15,8 @@
         <vm:MainViewModel x:Key="vm"></vm:MainViewModel>
     </UserControl.Resources>
     <Grid x:Name="grid">
+
         
-        <i:Interaction.Triggers>
-            <i:EventTrigger EventName="Loaded">
-                <i:InvokeCommandAction Command="{Binding Source={StaticResource vm}, Path=InitChartCommand}" CommandParameter="{Binding Source={x:Reference Name=chart}}"></i:InvokeCommandAction>
-            </i:EventTrigger>
-        </i:Interaction.Triggers>
         
         <Grid.RowDefinitions>
             <RowDefinition Height="2.5*"></RowDefinition>
@@ -62,6 +58,7 @@
 
         <md:Card  Background="WhiteSmoke" Grid.Row="0" Grid.Column="3">
             <StackPanel VerticalAlignment="Center">
+                
                 <TextBlock Margin="0,-30,0,0" FontWeight="Bold" Text="当月支出" FontSize="20" HorizontalAlignment="Center"></TextBlock>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Image Source="../Image/money.png" Height="100" Width="100" Margin="0,0,10,0"></Image>
@@ -108,8 +105,16 @@
         
         <!--图表-->
         <Grid  Background="#FFF5EBDE"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="7" Margin="0,-130,0,0">
-            <chart:CartesianChart Name="chart" LegendLocation="Top">
-            </chart:CartesianChart>
+            <WindowsFormsHost Name="host">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <i:InvokeCommandAction Command="{Binding Source={StaticResource vm}, Path=InitChartCommand}" CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=WindowsFormsHost, Mode=FindAncestor}}">
+                        </i:InvokeCommandAction>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ch:Chart x:Name="chart">
+                </ch:Chart>
+            </WindowsFormsHost>
         </Grid>
     </Grid>
 </UserControl>
