@@ -70,98 +70,22 @@
                 </DockPanel>
             </materialDesign:DrawerHost.LeftDrawerContent>
         </materialDesign:DrawerHost>-->
+    
+    <!--使用DockPanel做响应式布局-->
+    <DockPanel LastChildFill="True">
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="70"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80"></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition Height="30"></RowDefinition>
-            </Grid.RowDefinitions>
+        <!--工具栏部分-->
+        <Border Height="100" DockPanel.Dock="Top" x:Name="tool" Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  >
+            <Grid x:Name="imaData">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
-            
-            <!--菜单栏部分-->
-        <Border Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Grid.Row="1" Grid.Column="0">
-                <StackPanel   Orientation="Vertical"  >
-
-                    <!--菜单栏部分-->
-                    <ListBox x:Name="menuList" ItemsSource="{Binding Modules}"  >
-
-                        <!--绑定事件对应的命令 不能这样用，Listbox会重复触发SelectionChanged事件,导致传递过去的参数不对-->
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding SelectChangedCommand}">
-                                    <i:InvokeCommandAction.CommandParameter>
-                                        <MultiBinding Converter="{StaticResource multi}">
-                                            <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}"></Binding>
-                                            <Binding Path="SelectedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ListBox}"></Binding>
-                                        </MultiBinding>
-                                    </i:InvokeCommandAction.CommandParameter>
-                                </i:InvokeCommandAction>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-
-                        <!--定义数据模板，是md里的图标-->
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                <Image Source="{Binding IconCode, Converter={StaticResource imaToStr}}" Height="60" Width="30" >
-                                    </Image>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-
-                        <!--定义子项的控件模板，让选中时就有提示，不是选中图标才有提示-->
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListBoxItem">
-
-                                            <!--使用grid，修改背景色，选中时就有提示-->
-                                            <Grid Margin="0,20,0,0" x:Name="itemGrid" Background="{TemplateBinding Background}">
-                                                <Grid.ToolTip>
-                                                    <ToolTip Placement="Right">
-                                                        <TextBlock Text="{Binding MenuName}"></TextBlock>
-                                                    </ToolTip>
-                                                </Grid.ToolTip>
-                                                <ContentPresenter  HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-
-                                <!--选中修改背景色-->
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="Gray"></Setter>
-                                    </Trigger>
-                                    <Trigger Property="IsMouseOver" Value="False">
-                                        <Setter Property="Background" Value="Transparent"></Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                    </ListBox>
-                </StackPanel>
-            </Border>
-
-
-            <!--工具栏部分-->
-        <Border x:Name="tool" Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"  Grid.Row="0" Grid.Column="0"  Padding="0,20,0,20" >
-                <Grid x:Name="imaData">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!--头像部分-->
-                    <Image Margin="0,0,30,0"  HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"  Source="{Binding Path=User.Icon,Converter={StaticResource imaToStr}}"  Height="40" Width="40" >
+                <!--头像部分 菜单栏按钮-->
+                <StackPanel >
+                    <Image Margin="0,10,30,0"  HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"  Source="{Binding Path=User.Icon,Converter={StaticResource imaToStr}}"  Height="40" Width="40" >
                         <Image.ToolTip>
                             <ToolTip Placement="Right" Content="{Binding Path=User.Name}">
                             </ToolTip>
@@ -186,62 +110,224 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Image>
-                    <!--<Button Content="11" Click="Button_Click"></Button>-->
-                    <TextBlock  HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Cursor="Hand" Text="Welcome !" VerticalAlignment="Center" FontSize="25" FontWeight="Bold" ></TextBlock>
                     
-                    <StackPanel  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" >
-                        <!--MD默认的按钮样式就是鼠标移到那就是手状-->
-                    <Button Command="{Binding MinCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}" Margin="0,0,20,0" BorderThickness="0"  Height="20" Width="20" VerticalAlignment="Top" >
-                            <Button.ToolTip>
-                                <ToolTip>
-                                    最小化
-                                </ToolTip>
-                            </Button.ToolTip>
-                            <!--<materialDesign:PackIcon Kind="WindowMinimize"  Height="20" Width="30"  >
-                            </materialDesign:PackIcon>-->
+                    <!--菜单栏按钮-->
+                    <Grid Margin="0,6,30,0" Height="40" Width="50">
+                        <!--菜单栏按钮-->
+                        <Image Visibility="Visible" x:Name="menuImg" Stretch="Uniform"  Source="../../Image/menu.png">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding MenuCommand}" >
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource multi}">
+                                                <Binding RelativeSource="{RelativeSource AncestorType=Image, Mode=FindAncestor}"></Binding>
+                                                <Binding ElementName="backMenuImg"></Binding>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <Trigger Property="Image.IsMouseOver" Value="True">
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect BlurRadius="4" Color="Gray" ShadowDepth="1"></DropShadowEffect>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+
+                            <Image.Triggers>
+                                <EventTrigger RoutedEvent="MouseDown">
+                                    <EventTrigger.Actions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Margin" Storyboard.TargetName="menu" To="0,0,0,0" ></ThicknessAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger.Actions>
+                                </EventTrigger>
+                            </Image.Triggers>
+                        </Image>
+
+                        <!--收缩菜单按钮-->
+                        <Image Visibility="Hidden" x:Name="backMenuImg" Stretch="Uniform" Source="../../Image/backmenu.png">
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding BackMenuCommand}" >
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource multi}">
+                                                <Binding RelativeSource="{RelativeSource AncestorType=Image, Mode=FindAncestor}"></Binding>
+                                                <Binding ElementName="menuImg"></Binding>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <Trigger Property="Image.IsMouseOver" Value="True">
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect BlurRadius="4" Color="Gray" ShadowDepth="1"></DropShadowEffect>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+
+                            <Image.Triggers>
+                                <EventTrigger RoutedEvent="MouseDown">
+                                    <EventTrigger.Actions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ThicknessAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Margin" Storyboard.TargetName="menu" To="-80,0,0,0" ></ThicknessAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger.Actions>
+                                </EventTrigger>
+                            </Image.Triggers>
+                        </Image>
+                    </Grid>
+                 
+                </StackPanel>
+               
+                <TextBlock  HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Cursor="Hand" Text="Welcome !" VerticalAlignment="Center" FontSize="25" FontWeight="Bold" ></TextBlock>
+
+                <StackPanel  Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <Button Cursor="Hand" Command="{Binding MinCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}" Margin="0,10,20,0" BorderThickness="0"  Height="30" Width="30" VerticalAlignment="Top" >
+                        <Button.ToolTip>
+                            <ToolTip>
+                                最小化
+                            </ToolTip>
+                        </Button.ToolTip>
                         <Button.Background>
                             <ImageBrush ImageSource="../Image/mini.png"></ImageBrush>
                         </Button.Background>
                     </Button>
 
-                        <!---->
-                    <Button  Margin="0,0,20,0" BorderThickness="0" Command="{Binding MaxNormalCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"  Height="20" Width="20" VerticalAlignment="Top"  >
-                            <!--Kind绑定，可以切换按钮形态 Kind="{Binding MaxNormalKind , Mode=TwoWay}"-->
-                            <!--<materialDesign:PackIcon   Kind="{Binding MaxNormalKind , Mode=TwoWay}"  Height="20" Width="30">
-                            </materialDesign:PackIcon>-->
-                            <Button.ToolTip>
-                                  <ToolTip>
-                                    最大化
-                                </ToolTip>
-                            </Button.ToolTip>
+                    <Button Cursor="Hand"   Margin="0,10,20,0" BorderThickness="0" Command="{Binding MaxNormalCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"  Height="30" Width="30" VerticalAlignment="Top"  >
+                        <Button.ToolTip>
+                            <ToolTip>
+                                最大化
+                            </ToolTip>
+                        </Button.ToolTip>
                         <Button.Background>
                             <ImageBrush ImageSource="{Binding MaxNormalPicPath, Converter={StaticResource imaToStr}}"></ImageBrush>
                         </Button.Background>
                     </Button>
 
-                    <Button x:Name="b" Command="{Binding CloseCommand}" Margin="-5,-4,5,0"   BorderThickness="0"  Height="30" Width="30" VerticalAlignment="Top"  >
-                            <!--<materialDesign:PackIcon Kind="Close"   Height="20" Width="30">
-                            </materialDesign:PackIcon>-->
-                            <Button.ToolTip>
-                                <ToolTip >
-                                    关闭
-                                </ToolTip>
-                            </Button.ToolTip>
+                    <Button Cursor="Hand"  x:Name="b" Command="{Binding CloseCommand}" Margin="-5,5,5,0"   BorderThickness="0"  Height="40" Width="40" VerticalAlignment="Top"  >
+                        <Button.ToolTip>
+                            <ToolTip >
+                                关闭
+                            </ToolTip>
+                        </Button.ToolTip>
                         <Button.Background>
                             <ImageBrush ImageSource="../Image/close.png"></ImageBrush>
                         </Button.Background>
-                        </Button>
-                    </StackPanel>
+                    </Button>
+                </StackPanel>
 
-                </Grid>
-            </Border >
+            </Grid>
+        </Border >
+        
+        <!--菜单栏部分-->
+        <Border x:Name="menu" DockPanel.Dock="Left" Margin="-80,0,0,0" Width="80"  Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+            <StackPanel Orientation="Vertical"  >
+
+                <!--菜单栏部分-->
+                <ListBox x:Name="menuList" ItemsSource="{Binding Modules}"  >
+
+                    <!--绑定事件对应的命令 不能这样用，Listbox会重复触发SelectionChanged事件,导致传递过去的参数不对-->
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectChangedCommand}">
+                                <i:InvokeCommandAction.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource multi}">
+                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}"></Binding>
+                                        <Binding Path="SelectedIndex" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ListBox}"></Binding>
+                                    </MultiBinding>
+                                </i:InvokeCommandAction.CommandParameter>
+                            </i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                    <!--定义数据模板，是md里的图标-->
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Image Source="{Binding IconCode, Converter={StaticResource imaToStr}}" Height="60" Width="30" >
+                                </Image>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                    <!--定义子项的控件模板，让选中时就有提示，不是选中图标才有提示-->
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+
+                                        <!--使用grid，修改背景色，选中时就有提示-->
+                                        <Grid Margin="0,20,0,0" x:Name="itemGrid" Background="{TemplateBinding Background}">
+                                            <Grid.ToolTip>
+                                                <ToolTip Placement="Right">
+                                                    <TextBlock Text="{Binding MenuName}"></TextBlock>
+                                                </ToolTip>
+                                            </Grid.ToolTip>
+                                            <ContentPresenter  HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+
+                            <!--选中修改背景色-->
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="Gray"></Setter>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="False">
+                                    <Setter Property="Background" Value="Transparent"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </StackPanel>
+        </Border>
+        
+        <!--主要内容部分-->
+        <Grid Margin="0,-50,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+               
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+
+           
 
             <!--主要内容部分-->
-            <ContentControl Margin="0,80,0,0" x:Name="mainContent" Grid.Row="1" Grid.Column="1" >
+            <ContentControl Margin="0,80,0,0" x:Name="mainContent" Grid.Row="0" Grid.Column="1" >
             </ContentControl>
-            
+
             <!--状态栏部分-->
-        <Border Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="30"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Border Background="{Binding Source={StaticResource theme}, Path=SkinColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="30"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                 <StatusBar VerticalAlignment="Center" >
                     <StatusBar.Template>
                         <ControlTemplate TargetType="StatusBar">
@@ -257,5 +343,8 @@
                 </StatusBar>
             </Border>
         </Grid>
+        
+    </DockPanel>
+        
     <!--</materialDesign:DialogHost>-->
 </base:WindowBase>

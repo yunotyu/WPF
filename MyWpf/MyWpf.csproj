@@ -162,9 +162,6 @@
     <Compile Include="EF\Models\Store.cs" />
     <Compile Include="EF\Models\User.cs" />
     <Compile Include="EF\Models\User_Menu.cs" />
-    <Compile Include="Loading.xaml.cs">
-      <DependentUpon>Loading.xaml</DependentUpon>
-    </Compile>
     <Compile Include="LoadingUserControl.xaml.cs">
       <DependentUpon>LoadingUserControl.xaml</DependentUpon>
     </Compile>
@@ -264,10 +261,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Loading.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="LoadingUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -399,6 +392,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Image\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\menu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\backmenu.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets')" />

@@ -41,7 +41,7 @@
     </i:Interaction.Triggers>
 
      <!--设置获得焦点的元素-->
-    <Grid FocusManager.FocusedElement="{Binding ElementName=NameTextBox}" Loaded="Grid_Loaded">
+    <Grid  FocusManager.FocusedElement="{Binding ElementName=NameTextBox}" Loaded="Grid_Loaded">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>

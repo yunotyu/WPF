@@ -161,6 +161,31 @@ namespace MyWpf.ViewModels
             }
         }
 
+        private DelegateCommand menuCommand;
+
+        public DelegateCommand MenuCommand
+        {
+            get { return menuCommand; }
+            set
+            {
+                menuCommand = value;
+                this.RaisePropertyChanged("MenuCommand");
+            }
+        }
+
+        private DelegateCommand backMenuCommand;
+
+        public DelegateCommand BackMenuCommand
+        {
+            get { return backMenuCommand; }
+            set
+            {
+                backMenuCommand = value;
+                this.RaisePropertyChanged("BackMenuCommand");
+            }
+        }
+
+
 
         public HomeViewModel()
         {
@@ -266,6 +291,23 @@ namespace MyWpf.ViewModels
                   window.Close();
                   
               });
+
+            //菜单按钮
+            MenuCommand = new DelegateCommand();
+            MenuCommand.ExcuteAction = new Action<object>(o => {
+                List<object> li = o as List<object>;
+                //隐藏原来菜单标志，显示返回菜单标志
+                (li[0] as Image).Visibility = Visibility.Hidden;
+                (li[1] as Image).Visibility = Visibility.Visible;
+            });
+
+            //返回菜单按钮
+            BackMenuCommand = new DelegateCommand();
+            BackMenuCommand.ExcuteAction = new Action<object>(o => {
+                List<object> li = o as List<object>;
+                (li[0] as Image).Visibility = Visibility.Hidden;
+                (li[1] as Image).Visibility = Visibility.Visible;
+            });
 
             //获取用户对应权限菜单
             Menus = new List<MyWpf.EF.Models.Menu>();

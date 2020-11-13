@@ -193,7 +193,5 @@ C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.csproj.CopyComplete
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.exe
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.pdb
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\MyWpf.csprojAssemblyReference.cache
-C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\Loading.g.cs
-C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\Loading.baml
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\LoadingUserControl.g.cs
 C:\Users\admin\source\repos\MyWpf\MyWpf\obj\Debug\LoadingUserControl.baml
